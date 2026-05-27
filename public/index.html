@@ -19,33 +19,18 @@
             margin: 0;
             color: #5c3a3a;
             overflow: hidden;
-            position: relative;
-        }
-
-        footer {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-        }
-        .admin-link {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 4px 10px;
-            border-radius: 10px;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(8px);
-            padding: 40px;
+            -webkit-backdrop-filter: blur(8px);
+            padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            width: 450px;
-            height: 450px;
+            width: 90%;
+            max-width: 420px;
+            height: 480px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -72,22 +57,22 @@
         }
 
         img {
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
             object-fit: cover;
             border-radius: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        h2 { font-weight: 700; margin-bottom: 15px; font-size: 24px; color: #4a1c1c; margin-top: 0;}
-        p { font-size: 14px; margin-bottom: 20px; }
+        h2 { font-weight: 700; margin-bottom: 12px; font-size: 22px; color: #4a1c1c; margin-top: 0;}
+        p { font-size: 14px; margin-bottom: 15px; }
 
         .buttons-wrapper {
             position: relative;
             height: 50px;
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
             margin-top: 10px;
         }
 
@@ -98,7 +83,7 @@
             font-weight: 600;
             font-family: 'Poppins', sans-serif;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             height: 45px;
             box-sizing: border-box;
         }
@@ -108,7 +93,7 @@
             color: white;
             box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
             position: absolute;
-            left: 20px;
+            left: 15px;
             transition: transform 0.2s ease;
         }
         .btn-yes:hover { transform: scale(1.05); background-color: #ff9eaa; }
@@ -117,14 +102,14 @@
             background-color: #e2dcdc;
             color: #7a6565;
             position: absolute;
-            right: 20px;
+            right: 15px;
             transition: left 0.1s ease-out, top 0.1s ease-out;
         }
 
         input, select {
             font-family: 'Poppins', sans-serif;
             padding: 12px;
-            margin: 8px 0;
+            margin: 6px 0;
             border-radius: 12px;
             border: 1px solid #ddd;
             width: 100%;
@@ -132,52 +117,47 @@
             background: #fff;
             color: #5c3a3a;
             font-size: 14px;
+            appearance: none;
+            -webkit-appearance: none;
         }
 
         .food-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             margin-top: 10px;
             width: 100%;
         }
 
         .food-item {
             background: #fff;
-            padding: 15px 10px;
+            padding: 12px 8px;
             border-radius: 15px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             border: 1px solid #eee;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .food-item:hover {
             background: #ffb6c1;
             color: white;
             border-color: #ffb6c1;
-            transform: translateY(-3px);
         }
 
-        .date-card {
-            background: #faf5f5;
-            padding: 12px;
-            border-radius: 12px;
-            width: 100%;
-            text-align: left;
-            margin-top: 10px;
-            border-left: 5px solid #ffb6c1;
-            box-sizing: border-box;
-            font-size: 13px;
+        @media (max-width: 480px) {
+            .container { padding: 20px; height: 450px; }
+            h2 { font-size: 19px; }
+            img { width: 110px; height: 110px; }
+            .food-item { font-size: 12px; padding: 10px 6px; }
         }
     </style>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-        // COLOQUE AS SUAS CREDENCIAIS DO FIREBASE AQUI:
         const firebaseConfig = {
             apiKey: "AIzaSyCCquHW_OM6SPzex2Yef6Veqp5OOnAXnj4",
             authDomain: "date-perfeito-5925e.firebaseapp.com",
@@ -190,7 +170,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Objeto global temporário para guardar a data e hora digitadas antes de enviar para a nuvem
         window.tempDateData = { data: '', hora: '' };
 
         window.saveDateTime = function() {
@@ -210,7 +189,6 @@
         window.saveFoodAndFinish = async function(foodName) {
             nextStep(4, 5);
             try {
-                // Guarda os dados diretamente no Firestore
                 await addDoc(collection(db, "datesMarcados"), {
                     data: window.tempDateData.data,
                     hora: window.tempDateData.hora,
@@ -218,46 +196,14 @@
                     criadoEm: new Date()
                 });
             } catch (e) {
-                console.error("Erro ao salvar no Firestore, usando fallback local: ", e);
-                let localData = JSON.parse(localStorage.getItem('meusDates')) || [];
-                localData.push({data: window.tempDateData.data, hora: window.tempDateData.hora, comida: foodName});
-                localStorage.setItem('meusDates', JSON.stringify(localData));
+                console.error("Erro ao salvar no Firestore: ", e);
             }
         };
 
-        window.carregarDatesDoBanco = async function() {
-            const datesList = document.getElementById('datesList');
-            datesList.innerHTML = '';
-            try {
-                const q = query(collection(db, "datesMarcados"), orderBy("criadoEm", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                if(querySnapshot.empty) {
-                    datesList.innerHTML = '<p style="color: #888;">Nenhum date registrado na nuvem ainda.</p>';
-                    return;
-                }
-                querySnapshot.forEach((doc) => {
-                    const d = doc.data();
-                    datesList.innerHTML += `
-                        <div class="date-card">
-                            <strong>📅 Data:</strong> ${d.data}<br>
-                            <strong>⏰ Horário:</strong> ${d.hora}h<br>
-                            <strong>🍕 Cardápio:</strong> ${d.comida}
-                        </div>
-                    `;
-                });
-            } catch(e) {
-                console.error("Erro ao ler dados, carregando locais: ", e);
-                let localData = JSON.parse(localStorage.getItem('meusDates')) || [];
-                if(localData.length > 0) {
-                    localData.forEach(d => {
-                        datesList.innerHTML += `<div class="date-card"><strong>📅 Data:</strong> ${d.data}<br><strong>⏰ Horário:</strong> ${d.hora}h<br><strong>🍕 Cardápio:</strong> ${d.comida}</div>`;
-                    });
-                } else {
-                    datesList.innerHTML = '<p style="color: #888;">Verifique as credenciais do seu FirebaseConfig.</p>';
-                }
-            }
-        };
+        window.nextStep = function(current, next) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + next).classList.add('active');
+        }
     </script>
 </head>
 <body>
@@ -304,69 +250,34 @@
                 <div class="food-item" onclick="window.saveFoodAndFinish('🍔 Méqui')">🍔 Méqui</div>
                 <div class="food-item" onclick="window.saveFoodAndFinish('🍝 Massa')">🍝 Massa</div>
                 <div class="food-item" onclick="window.saveFoodAndFinish('🌮 Tacos')">🌮 Tacos</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍜 Ramen')">🍜 Ramen</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍻 Barzinho')">🍻 Barzinho</div>
             </div>
         </div>
 
         <div id="step5" class="step">
             <img src="imagens/Shrek sorrindo.gif" alt="Shrek">
             <h2 style="font-size: 20px;">Ainda bem que não disse não.</h2>
-            <p style="font-weight: 600; margin-bottom: 5px;">Suas respostas foram salvas! 🚗</p>
             <p style="font-size: 12px; color: #666;">Te vejo em breve!</p>
-        </div>
-
-        <div id="stepLogin" class="step">
-            <h2>Painel do Eric 🔒</h2>
-            <p>Insira a chave de acesso para ver os dates:</p>
-            <input type="password" id="adminPassword" placeholder="Sua senha secreta">
-            <button class="btn-yes" style="position: static; margin-top: 15px; width: 100%; background: #4a1c1c;" onclick="tentarLogin()">Entrar</button>
-            <button style="background: transparent; color: #888; font-size: 12px; margin-top: 10px;" onclick="nextStep('Login', 1)">Cancelar</button>
-        </div>
-
-        <div id="stepAdmin" class="step">
-            <h2 style="font-size: 22px; margin-bottom: 5px;">📅 Dates Marcados</h2>
-            <div id="datesList" style="width: 100%; max-height: 280px; overflow-y: auto; padding-right: 5px;">
-                <p style="color: #888;">Carregando respostas da nuvem...</p>
-            </div>
-            <button class="btn-yes" style="position: static; margin-top: 15px; background-color: #4a1c1c;" onclick="nextStep('Admin', 1)">Sair do Painel</button>
         </div>
 
     </div>
 
-    <footer>
-        <span class="admin-link" onclick="abrirLogin()">Área do Eric 🔒</span>
-    </footer>
-
     <script>
-        function nextStep(current, next) {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + next).classList.add('active');
-        }
-
-        window.abrirLogin = function() {
-            nextStep(1, 'Login');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        window.tentarLogin = function() {
-            const senhaInput = document.getElementById('adminPassword').value;
-            if(senhaInput === "1234") { // Sinta-se à vontade para alterar a sua senha aqui
-                nextStep('Login', 'Admin');
-                window.carregarDatesDoBanco();
-            } else {
-                alert("Senha incorreta! ⛔");
-            }
-        }
-
-        /* Lógica do Botão Fujão (Travado no Bloco Central) */
         const btnNo = document.getElementById('btnNo');
         const wrapper = document.querySelector('.buttons-wrapper');
-        btnNo.addEventListener('mouseover', function() {
-            const maxX = wrapper.offsetWidth - this.offsetWidth;
-            const maxY = wrapper.offsetHeight + 60;
-            this.style.left = Math.floor(Math.random() * maxX) + 'px';
-            this.style.top = (Math.floor(Math.random() * maxY) - 30) + 'px';
-            this.style.right = 'auto';
+        
+        const fugirBotao = function() {
+            const maxX = wrapper.offsetWidth - btnNo.offsetWidth;
+            const maxY = wrapper.offsetHeight + 40;
+            btnNo.style.left = Math.floor(Math.random() * maxX) + 'px';
+            btnNo.style.top = (Math.floor(Math.random() * maxY) - 20) + 'px';
+            btnNo.style.right = 'auto';
+        };
+
+        btnNo.addEventListener('mouseover', fugirBotao);
+        btnNo.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            fugirBotao();
         });
     </script>
 </body>
