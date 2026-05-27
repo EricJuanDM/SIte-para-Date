@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Request 🌸</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('imagens/f58.gif'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #5c3a3a;
+            overflow: hidden;
+            position: relative;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        .admin-link {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 450px;
+            height: 450px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step { 
+            display: none; 
+            width: 100%; 
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s ease; 
+        }
+        
+        .step.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        h2 { font-weight: 700; margin-bottom: 15px; font-size: 24px; color: #4a1c1c; margin-top: 0;}
+        p { font-size: 14px; margin-bottom: 20px; }
+
+        .buttons-wrapper {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            font-size: 16px;
+            height: 45px;
+            box-sizing: border-box;
+        }
+
+        .btn-yes {
+            background-color: #ffb6c1;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+            position: absolute;
+            left: 20px;
+            transition: transform 0.2s ease;
+        }
+        .btn-yes:hover { transform: scale(1.05); background-color: #ff9eaa; }
+
+        .btn-no {
+            background-color: #e2dcdc;
+            color: #7a6565;
+            position: absolute;
+            right: 20px;
+            transition: left 0.1s ease-out, top 0.1s ease-out;
+        }
+
+        input, select {
+            font-family: 'Poppins', sans-serif;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+            background: #fff;
+            color: #5c3a3a;
+            font-size: 14px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .food-item {
+            background: #fff;
+            padding: 15px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .food-item:hover {
+            background: #ffb6c1;
+            color: white;
+            border-color: #ffb6c1;
+            transform: translateY(-3px);
+        }
+
+        .date-card {
+            background: #faf5f5;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            text-align: left;
+            margin-top: 10px;
+            border-left: 5px solid #ffb6c1;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        // COLOQUE AS SUAS CREDENCIAIS DO FIREBASE AQUI:
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCquHW_OM6SPzex2Yef6Veqp5OOnAXnj4",
+            authDomain: "date-perfeito-5925e.firebaseapp.com",
+            projectId: "date-perfeito-5925e",
+            storageBucket: "date-perfeito-5925e.firebasestorage.app",
+            messagingSenderId: "958617736891",
+            appId: "1:958617736891:web:d45e2a7f8b9b94b4ccfb9e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Objeto global temporário para guardar a data e hora digitadas antes de enviar para a nuvem
+        window.tempDateData = { data: '', hora: '' };
+
+        window.saveDateTime = function() {
+            const dateInput = document.getElementById('datePicker').value;
+            const timeInput = document.getElementById('timePicker').value;
+
+            if(!dateInput || !timeInput) {
+                alert("Escolha o dia e o horário direitinho! 😉");
+                return;
+            }
+
+            window.tempDateData.data = dateInput.split('-').reverse().join('/');
+            window.tempDateData.hora = timeInput;
+            nextStep(3, 4);
+        };
+
+        window.saveFoodAndFinish = async function(foodName) {
+            nextStep(4, 5);
+            try {
+                // Guarda os dados diretamente no Firestore
+                await addDoc(collection(db, "datesMarcados"), {
+                    data: window.tempDateData.data,
+                    hora: window.tempDateData.hora,
+                    comida: foodName,
+                    criadoEm: new Date()
+                });
+            } catch (e) {
+                console.error("Erro ao salvar no Firestore, usando fallback local: ", e);
+                let localData = JSON.parse(localStorage.getItem('meusDates')) || [];
+                localData.push({data: window.tempDateData.data, hora: window.tempDateData.hora, comida: foodName});
+                localStorage.setItem('meusDates', JSON.stringify(localData));
+            }
+        };
+
+        window.carregarDatesDoBanco = async function() {
+            const datesList = document.getElementById('datesList');
+            datesList.innerHTML = '';
+            try {
+                const q = query(collection(db, "datesMarcados"), orderBy("criadoEm", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if(querySnapshot.empty) {
+                    datesList.innerHTML = '<p style="color: #888;">Nenhum date registrado na nuvem ainda.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const d = doc.data();
+                    datesList.innerHTML += `
+                        <div class="date-card">
+                            <strong>📅 Data:</strong> ${d.data}<br>
+                            <strong>⏰ Horário:</strong> ${d.hora}h<br>
+                            <strong>🍕 Cardápio:</strong> ${d.comida}
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                console.error("Erro ao ler dados, carregando locais: ", e);
+                let localData = JSON.parse(localStorage.getItem('meusDates')) || [];
+                if(localData.length > 0) {
+                    localData.forEach(d => {
+                        datesList.innerHTML += `<div class="date-card"><strong>📅 Data:</strong> ${d.data}<br><strong>⏰ Horário:</strong> ${d.hora}h<br><strong>🍕 Cardápio:</strong> ${d.comida}</div>`;
+                    });
+                } else {
+                    datesList.innerHTML = '<p style="color: #888;">Verifique as credenciais do seu FirebaseConfig.</p>';
+                }
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="step1" class="step active">
+            <img src="imagens/Gatinho.webp" alt="Gatinho">
+            <h2>Você quer sair comigo? 🌸</h2>
+            <div class="buttons-wrapper">
+                <button class="btn-yes" onclick="nextStep(1, 2)">SIM 💕</button>
+                <button class="btn-no" id="btnNo">não...</button>
+            </div>
+        </div>
+
+        <div id="step2" class="step">
+            <img src="imagens/Bob Esponja comemorando.webp" alt="Bob Esponja">
+            <h2>SÉRIO QUE VOCÊ DISSE SIM?? 😭</h2>
+            <p>Eu já tava pronto pra você dizer não 😅</p>
+            <button class="btn-yes" style="position: static;" onclick="nextStep(2, 3)">ok ok! ➔</button>
+        </div>
+
+        <div id="step3" class="step">
+            <h2>Então... quando você tá livre? 🗓️🐾</h2>
+            <input type="date" id="datePicker">
+            <select id="timePicker">
+                <option value="" disabled selected>Escolha um horário...</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="19:30">19:30</option>
+                <option value="20:00">20:00</option>
+                <option value="20:30">20:30</option>
+                <option value="21:00">21:00</option>
+                <option value="21:30">21:30</option>
+            </select>
+            <button class="btn-yes" style="position: static; margin-top: 15px; width: 100%;" onclick="window.saveDateTime()">marcar! ♥</button>
+        </div>
+
+        <div id="step4" class="step">
+            <h2>O que vamos comer? 🍜✨</h2>
+            <div class="food-grid">
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍕 Pizza')">🍕 Pizza</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍣 Sushi')">🍣 Sushi</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍔 Méqui')">🍔 Méqui</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍝 Massa')">🍝 Massa</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🌮 Tacos')">🌮 Tacos</div>
+                <div class="food-item" onclick="window.saveFoodAndFinish('🍜 Ramen')">🍜 Ramen</div>
+            </div>
+        </div>
+
+        <div id="step5" class="step">
+            <img src="imagens/Shrek sorrindo.gif" alt="Shrek">
+            <h2 style="font-size: 20px;">Ainda bem que não disse não.</h2>
+            <p style="font-weight: 600; margin-bottom: 5px;">Suas respostas foram salvas! 🚗</p>
+            <p style="font-size: 12px; color: #666;">Te vejo em breve!</p>
+        </div>
+
+        <div id="stepLogin" class="step">
+            <h2>Painel do Eric 🔒</h2>
+            <p>Insira a chave de acesso para ver os dates:</p>
+            <input type="password" id="adminPassword" placeholder="Sua senha secreta">
+            <button class="btn-yes" style="position: static; margin-top: 15px; width: 100%; background: #4a1c1c;" onclick="tentarLogin()">Entrar</button>
+            <button style="background: transparent; color: #888; font-size: 12px; margin-top: 10px;" onclick="nextStep('Login', 1)">Cancelar</button>
+        </div>
+
+        <div id="stepAdmin" class="step">
+            <h2 style="font-size: 22px; margin-bottom: 5px;">📅 Dates Marcados</h2>
+            <div id="datesList" style="width: 100%; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                <p style="color: #888;">Carregando respostas da nuvem...</p>
+            </div>
+            <button class="btn-yes" style="position: static; margin-top: 15px; background-color: #4a1c1c;" onclick="nextStep('Admin', 1)">Sair do Painel</button>
+        </div>
+
+    </div>
+
+    <footer>
+        <span class="admin-link" onclick="abrirLogin()">Área do Eric 🔒</span>
+    </footer>
+
+    <script>
+        function nextStep(current, next) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + next).classList.add('active');
+        }
+
+        window.abrirLogin = function() {
+            nextStep(1, 'Login');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        window.tentarLogin = function() {
+            const senhaInput = document.getElementById('adminPassword').value;
+            if(senhaInput === "1234") { // Sinta-se à vontade para alterar a sua senha aqui
+                nextStep('Login', 'Admin');
+                window.carregarDatesDoBanco();
+            } else {
+                alert("Senha incorreta! ⛔");
+            }
+        }
+
+        /* Lógica do Botão Fujão (Travado no Bloco Central) */
+        const btnNo = document.getElementById('btnNo');
+        const wrapper = document.querySelector('.buttons-wrapper');
+        btnNo.addEventListener('mouseover', function() {
+            const maxX = wrapper.offsetWidth - this.offsetWidth;
+            const maxY = wrapper.offsetHeight + 60;
+            this.style.left = Math.floor(Math.random() * maxX) + 'px';
+            this.style.top = (Math.floor(Math.random() * maxY) - 30) + 'px';
+            this.style.right = 'auto';
+        });
+    </script>
+</body>
+</html>
