@@ -100,7 +100,7 @@
             box-sizing: border-box;
             font-size: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            position: relative; /* Para posicionar o botão de apagar */
+            position: relative;
         }
 
         .btn-delete {
@@ -120,7 +120,6 @@
         }
         .btn-delete:hover {
             color: #ff0000;
-            background: none;
             transform: scale(1.1);
         }
     </style>
@@ -141,64 +140,63 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Amarrando a função no escopo global da janela de forma explícita
         window.tentarLogin = function() {
             const senhaInput = document.getElementById('adminPassword').value;
             if(senhaInput === "1234") { 
                 document.getElementById('stepLogin').classList.remove('active');
                 document.getElementById('stepAdmin').classList.add('active');
-                carregarDates();
+                window.carregarDates(); // Chama a função de carregar dados
             } else {
                 alert("Senha incorreta, Eric! ⛔");
             }
         };
 
-        async function carregarDates() {
+        window.carregarDates = async function() {
             const datesList = document.getElementById('datesList');
-            datesList.innerHTML = '<p style="color: #888; text-align:center;">Buscando respostas na nuvem...</p>';
+            datesList.innerHTML = '<p style="color: #888; text-align:center; font-size:13px;">Buscando respostas na nuvem...</p>';
             try {
+                // Busca na coleção "datesMarcados" ordenando por data de criação
                 const q = query(collection(db, "datesMarcados"), orderBy("criadoEm", "desc"));
                 const querySnapshot = await getDocs(q);
                 
                 if(querySnapshot.empty) {
-                    datesList.innerHTML = '<p style="color: #888; text-align:center;">Nenhum date marcado ainda. Aguardando ela responder! ⏳</p>';
+                    datesList.innerHTML = '<p style="color: #888; text-align:center; font-size:13px;">Nenhum date marcado ainda. Aguardando ela responder! ⏳</p>';
                     return;
                 }
                 datesList.innerHTML = '';
                 querySnapshot.forEach((documento) => {
                     const d = documento.data();
-                    const id = documento.id; // Pega o ID único do registro para poder apagar
+                    const id = documento.id;
                     
                     datesList.innerHTML += `
                         <div class="date-card" id="card-${id}">
-                            <button class="btn-delete" onclick="window.apagarDate('${id}')" title="Apagar este registro">🗑️</button>
-                            <strong>📅 Data escolhida:</strong> ${d.data}<br>
-                            <strong>⏰ Horário selecionado:</strong> ${d.hora}h<br>
-                            <strong>🍕 Cardápio do Date:</strong> ${d.comida}
+                            <button class="btn-delete" onclick="window.apagarDate('${id}')" title="Apagar">🗑️</button>
+                            <strong>📅 Data escolhida:</strong> ${d.data || 'Não definida'}<br>
+                            <strong>⏰ Horário:</strong> ${d.hora || 'Não definido'}h<br>
+                            <strong>🍕 Cardápio:</strong> ${d.comida || 'Não definido'}
                         </div>
                     `;
                 });
             } catch(e) {
-                console.error(e);
-                datesList.innerHTML = '<p style="color: #cc0000; text-align:center;">Erro na conexão com o Firestore.</p>';
+                console.error("Erro ao ler dados: ", e);
+                datesList.innerHTML = '<p style="color: #cc0000; text-align:center; font-size:13px;">Erro na conexão com o Firestore. Verifique se as Regras estão públicas.</p>';
             }
-        }
+        };
 
-        // Função global para deletar o documento do banco
         window.apagarDate = async function(id) {
             if(confirm("Tem certeza que quer apagar este registro de teste? 🤔")) {
                 try {
                     await deleteDoc(doc(db, "datesMarcados", id));
-                    // Remove o elemento da tela sem precisar atualizar a página inteira
                     const card = document.getElementById(`card-${id}`);
                     if(card) card.remove();
                     
-                    // Se apagou tudo, recarrega para mostrar a mensagem de vazio
                     const datesList = document.getElementById('datesList');
                     if(datesList.children.length === 0) {
-                        datesList.innerHTML = '<p style="color: #888; text-align:center;">Nenhum date marcado ainda. Aguardando ela responder! ⏳</p>';
+                        datesList.innerHTML = '<p style="color: #888; text-align:center; font-size:13px;">Nenhum date marcado ainda. Aguardando ela responder! ⏳</p>';
                     }
                 } catch (error) {
-                    console.error("Erro ao deletar documento: ", error);
+                    console.error("Erro ao deletar: ", error);
                     alert("Não foi possível apagar do banco.");
                 }
             }
@@ -212,7 +210,7 @@
         <div id="stepLogin" class="panel-step active">
             <h2>Painel Admin 🔒</h2>
             <p>Acesso restrito para visualização de respostas</p>
-            <input type="password" id="adminPassword" placeholder="Sua senha de acesso">
+            <input type="password" id="adminPassword" placeholder="Sua senha de acesso" onkeydown="if(event.key === 'Enter') window.tentarLogin()">
             <button onclick="window.tentarLogin()">Acessar Banco</button>
         </div>
 
