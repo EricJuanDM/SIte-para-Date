@@ -21,6 +21,17 @@
             <!-- Coluna da Esquerda: Criar e Personalizar Convite -->
             <section class="dash-section">
                 <h3>✨ Criar Novo Convite</h3>
+
+                <!-- Container do link gerado (inicialmente oculto) -->
+                <div id="generatedLinkContainer" style="display: none; background: #e8f5e9; border: 1.5px solid #a5d6a7; padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: left;">
+                    <h4 style="color: #2e7d32; margin-bottom: 4px; font-size: 15px; font-family: var(--font-title); font-weight: 700;">🎉 Convite Criado com Sucesso!</h4>
+                    <p style="color: #4caf50; font-size: 12px; margin-bottom: 12px;">Copie o link abaixo e envie para a pessoa especial:</p>
+                    <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                        <input type="text" id="generatedLinkInput" readonly style="margin-bottom: 0; flex: 1; border-color: #a5d6a7; text-align: left; background: #fff; font-size: 14px; padding: 10px 12px;">
+                        <button type="button" class="btn-primary" id="btnCopyGenerated" style="height: 44px; background-color: #2e7d32; border-radius: 10px; font-size: 13px; padding: 0 15px; box-shadow: none; flex-shrink: 0;">Copiar Link</button>
+                    </div>
+                </div>
+
                 <form id="inviteForm" onsubmit="return false;">
                     <!-- Nome do Destinatário -->
                     <label for="nomeDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Nome de quem vai receber:</label>

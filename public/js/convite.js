@@ -5,6 +5,7 @@ import {
     updateDoc, 
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { showModal } from "./modal.js";
 
 // 1. Extrair ID do convite a partir da URL (suporta caminhos dinâmicos reescritos)
 const pathParts = window.location.pathname.split('/').filter(Boolean);
@@ -111,12 +112,12 @@ function setupEventListeners() {
     btnOk.addEventListener("click", () => nextStep(3));
 
     // Salvar data e hora temporariamente e avançar para alimentos
-    btnSaveTime.addEventListener("click", () => {
+    btnSaveTime.addEventListener("click", async () => {
         const dateInput = document.getElementById("datePicker").value;
         const timeInput = document.getElementById("timePicker").value;
 
         if (!dateInput || !timeInput) {
-            alert("Escolha o dia e o horário direitinho! 😉");
+            await showModal({ type: "alert", message: "Escolha o dia e o horário direitinho! 😉" });
             return;
         }
 

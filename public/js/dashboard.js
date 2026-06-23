@@ -1,5 +1,6 @@
 import { auth, db, storage } from "./firebase-config.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { showModal } from "./modal.js";
 import { 
     collection, 
     addDoc, 
@@ -23,10 +24,10 @@ let recusaCount = 0;
 let unsubscribe = null;
 
 // Adicionar um novo campo de opção de recusa
-function addRecusaField(value = "") {
+async function addRecusaField(value = "") {
     const currentFields = recusaList.children.length;
     if (currentFields >= 5) {
-        alert("O limite máximo é de 5 opções de recusa! ⛔");
+        await showModal({ type: "alert", message: "O limite máximo é de 5 opções de recusa! ⛔" });
         return;
     }
     
@@ -46,9 +47,9 @@ function addRecusaField(value = "") {
     btnRemove.type = "button";
     btnRemove.className = "btn-remove-recusa";
     btnRemove.innerHTML = "🗑️";
-    btnRemove.onclick = () => {
+    btnRemove.onclick = async () => {
         if (recusaList.children.length <= 2) {
-            alert("Você precisa definir pelo menos 2 opções de recusa! ⛔");
+            await showModal({ type: "alert", message: "Você precisa definir pelo menos 2 opções de recusa! ⛔" });
             return;
         }
         div.remove();
@@ -141,7 +142,7 @@ function setupRealtimeListener(userId) {
                 </div>
                 ${detailsHtml}
                 <div class="invitation-actions">
-                    <button class="btn-copy" onclick="copyInviteLink('${id}')">Copiar Link 🔗</button>
+                    <button class="btn-copy" onclick="copyInviteLink('${id}', this)">Copiar Link 🔗</button>
                     <button class="btn-delete" onclick="deleteInvite('${id}')">Excluir 🗑️</button>
                 </div>
             `;
@@ -158,10 +159,16 @@ function setupRealtimeListener(userId) {
 }
 
 // Funções globais expostas no escopo window
-window.copyInviteLink = function(id) {
+window.copyInviteLink = function(id, button) {
     const inviteUrl = `${window.location.origin}/convite/${id}`;
     navigator.clipboard.writeText(inviteUrl).then(() => {
-        alert("Link do convite copiado com sucesso! Envie para o seu date. 💕");
+        const originalText = button.innerHTML;
+        button.innerHTML = "✓ Copiado!";
+        button.disabled = true;
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
     }).catch(err => {
         console.error("Erro ao copiar link:", err);
         // Fallback
@@ -171,17 +178,28 @@ window.copyInviteLink = function(id) {
         temp.select();
         document.execCommand("copy");
         document.body.removeChild(temp);
-        alert("Link copiado com sucesso! 💕");
+        
+        const originalText = button.innerHTML;
+        button.innerHTML = "✓ Copiado!";
+        button.disabled = true;
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
     });
 };
 
 window.deleteInvite = async function(id) {
-    if (confirm("Tem certeza que deseja excluir permanentemente este convite? 💔")) {
+    const confirmDelete = await showModal({
+        type: "confirm",
+        message: "Tem certeza que deseja excluir permanentemente este convite? 💔"
+    });
+    if (confirmDelete) {
         try {
             await deleteDoc(doc(db, "convites", id));
         } catch (err) {
             console.error("Erro ao deletar convite:", err);
-            alert("Não foi possível excluir o convite.");
+            await showModal({ type: "alert", message: "Não foi possível excluir o convite." });
         }
     }
 };
@@ -205,7 +223,7 @@ if (inviteForm) {
         });
 
         if (opcoesRecusa.length < 2) {
-            alert("Você precisa fornecer pelo menos 2 opções de recusa! ⛔");
+            await showModal({ type: "alert", message: "Você precisa fornecer pelo menos 2 opções de recusa! ⛔" });
             return;
         }
 
@@ -261,7 +279,34 @@ if (inviteForm) {
                 "personalizacao.imagens": imagensUrls
             });
 
-            alert("Convite criado com sucesso! 🎉");
+            // Exibir contêiner de link destacado com feedback de cópia
+            const generatedLinkContainer = document.getElementById("generatedLinkContainer");
+            const generatedLinkInput = document.getElementById("generatedLinkInput");
+            const btnCopyGenerated = document.getElementById("btnCopyGenerated");
+
+            const inviteUrl = `${window.location.origin}/convite/${conviteId}`;
+            generatedLinkInput.value = inviteUrl;
+            generatedLinkContainer.style.display = "block";
+            generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
+
+            btnCopyGenerated.onclick = () => {
+                navigator.clipboard.writeText(inviteUrl).then(() => {
+                    btnCopyGenerated.textContent = "✓ Copiado!";
+                    setTimeout(() => {
+                        btnCopyGenerated.textContent = "Copiar Link";
+                    }, 2000);
+                }).catch(err => {
+                    console.error("Erro ao copiar:", err);
+                    generatedLinkInput.select();
+                    document.execCommand("copy");
+                    btnCopyGenerated.textContent = "✓ Copiado!";
+                    setTimeout(() => {
+                        btnCopyGenerated.textContent = "Copiar Link";
+                    }, 2000);
+                });
+            };
+
+            await showModal({ type: "alert", message: "Convite criado com sucesso! 🎉" });
             inviteForm.reset();
             
             // Resetar os campos de fotos
@@ -279,7 +324,7 @@ if (inviteForm) {
 
         } catch (err) {
             console.error("Erro ao criar convite:", err);
-            alert("Erro ao criar convite. Verifique as configurações de Storage/Firestore.");
+            await showModal({ type: "alert", message: "Erro ao criar convite. Verifique as configurações de Storage/Firestore." });
         } finally {
             btnSubmit.disabled = false;
             btnSubmit.textContent = originalText;

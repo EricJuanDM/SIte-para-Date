@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase-config.js";
+import { showModal } from "./modal.js";
 import { 
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
@@ -58,7 +59,7 @@ if (loginForm) {
             } else if (error.code === "auth/invalid-email") {
                 msg = "Formato de email inválido! ⛔";
             }
-            alert(msg);
+            await showModal({ type: "alert", message: msg });
             btn.disabled = false;
             btn.textContent = originalText;
         }
@@ -77,7 +78,7 @@ if (registerForm) {
         const originalText = btn.textContent;
 
         if (password.length < 6) {
-            alert("A senha precisa ter no mínimo 6 caracteres! 🔑");
+            await showModal({ type: "alert", message: "A senha precisa ter no mínimo 6 caracteres! 🔑" });
             return;
         }
 
@@ -96,7 +97,7 @@ if (registerForm) {
             } else if (error.code === "auth/invalid-email") {
                 msg = "Formato de email inválido! ⛔";
             }
-            alert(msg);
+            await showModal({ type: "alert", message: msg });
             btn.disabled = false;
             btn.textContent = originalText;
         }
@@ -115,7 +116,7 @@ if (btnGoogle) {
         } catch (error) {
             console.error("Erro no Google Auth:", error);
             if (error.code !== "auth/popup-closed-by-user") {
-                alert("Ocorreu um erro ao fazer login com o Google. ⛔");
+                await showModal({ type: "alert", message: "Ocorreu um erro ao fazer login com o Google. ⛔" });
             }
         }
     });
