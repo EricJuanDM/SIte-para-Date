@@ -758,3 +758,198 @@ button {
 .btn-remove-lugar:hover {
     background: rgba(204, 0, 0, 0.05);
 }
+
+/* ==========================================================================
+   Redesign do Dashboard - Layout Limpo e Moderno
+   ========================================================================== */
+
+/* Tema Claro para o Painel do Remetente */
+body.dashboard-body {
+    background-color: #f5f5f5 !important;
+    background-image: none !important;
+    color: #333333;
+}
+
+body.dashboard-body .container-wide {
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
+    max-width: 900px;
+    padding: 30px 24px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+body.dashboard-body .dash-header h2 {
+    color: #2b1616;
+}
+
+body.dashboard-body .dash-header p {
+    color: #777777;
+}
+
+body.dashboard-body .dash-section {
+    background: #ffffff !important;
+    border: 1px solid #eaeaea !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+}
+
+body.dashboard-body label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444444;
+    margin-bottom: 6px;
+    display: block;
+}
+
+body.dashboard-body input[type="text"],
+body.dashboard-body input[type="email"],
+body.dashboard-body input[type="password"],
+body.dashboard-body input[type="date"],
+body.dashboard-body select,
+body.dashboard-body textarea {
+    background: #fafafa;
+    border: 1.5px solid #eaeaea;
+    color: #333333;
+    font-size: 16px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+
+body.dashboard-body input:focus,
+body.dashboard-body select:focus,
+body.dashboard-body textarea:focus {
+    border-color: #ff8fa3;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.15);
+}
+
+/* Sistema de Abas */
+.tab-navigation {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1.5px solid #eaeaea;
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #666666;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    height: auto !important;
+    transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+    background-color: #eaeaea !important;
+    color: #333333;
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, #ff8fa3 0%, #c97d8c 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(255, 143, 163, 0.2) !important;
+}
+
+.dashboard-tab-content {
+    display: none;
+    animation: tabFadeIn 0.3s ease forwards;
+}
+
+.dashboard-tab-content.active {
+    display: block;
+}
+
+@keyframes tabFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Botões com Gradiente Rosa/Roxo */
+body.dashboard-body .btn-primary {
+    background: linear-gradient(135deg, #ff8fa3 0%, #c97d8c 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 143, 163, 0.25) !important;
+}
+
+body.dashboard-body .btn-primary:hover {
+    background: linear-gradient(135deg, #ff708a 0%, #b86b7a 100%) !important;
+    box-shadow: 0 6px 20px rgba(255, 143, 163, 0.35) !important;
+    transform: translateY(-2px);
+}
+
+body.dashboard-body .btn-secondary {
+    background: #eaeaea !important;
+    color: #444444 !important;
+    box-shadow: none !important;
+}
+
+body.dashboard-body .btn-secondary:hover {
+    background: #dddddd !important;
+    transform: translateY(-2px);
+}
+
+/* Organização de Campo Lado a Lado no formulário */
+.color-picker-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.color-picker-row .color-field {
+    flex: 1;
+}
+
+/* Cards da Listagem com Visual Limpo */
+.invitation-card {
+    background: #ffffff !important;
+    border: 1px solid #eaeaea !important;
+    border-left: 6px solid var(--color-primary) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+}
+
+.invitation-card h4 {
+    color: #2b1616;
+}
+
+.invitation-card .invitation-details {
+    color: #666666;
+}
+
+/* Responsividade Mobile do Redesign */
+@media (max-width: 768px) {
+    .tab-navigation {
+        flex-direction: column;
+        border-bottom: none;
+        padding-bottom: 0;
+        gap: 6px;
+    }
+    
+    .tab-button {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+    
+    body.dashboard-body .container-wide {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 20px 16px;
+    }
+}
