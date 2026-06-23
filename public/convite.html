@@ -19,6 +19,8 @@
     </style>
 </head>
 <body>
+    <!-- Overlay Escuro para Legibilidade do Background -->
+    <div id="bgOverlay" class="bg-overlay" style="display: none;"></div>
     <!-- Container de Carregamento inicial -->
     <div id="loadingContainer" class="container">
         <h2 style="font-size: 20px;">Carregando convite... 🌸</h2>
@@ -64,16 +66,11 @@
             <button class="btn-yes" id="btnSaveTime" style="position: static; margin-top: 15px; width: 100%;">Marcar! ♥</button>
         </div>
 
-        <!-- Passo 4: Escolha de Comida -->
+        <!-- Passo 4: Escolha do Lugar -->
         <div id="step4" class="step">
-            <h2>O que vamos comer? 🍜✨</h2>
-            <div class="food-grid">
-                <div class="food-item" data-food="🍕 Pizza">🍕 Pizza</div>
-                <div class="food-item" data-food="🍣 Sushi">🍣 Sushi</div>
-                <div class="food-item" data-food="🍔 Méqui">🍔 Méqui</div>
-                <div class="food-item" data-food="🍝 Massa">🍝 Massa</div>
-                <div class="food-item" data-food="🌮 Tacos">🌮 Tacos</div>
-                <div class="food-item" data-food="🍻 Barzinho">🍻 Barzinho</div>
+            <h2>Aonde vamos? 📍✨</h2>
+            <div class="food-grid" id="placesGrid">
+                <!-- Populado dinamicamente via JS -->
             </div>
         </div>
 
@@ -91,6 +88,13 @@
         <h1 style="font-size: 64px; margin-bottom: 10px;">💔</h1>
         <h2>Convite não encontrado</h2>
         <p>O link pode estar quebrado, expirado ou ter sido excluído pelo remetente.</p>
+    </div>
+
+    <!-- Container de Convite Expirado -->
+    <div id="expiredContainer" class="container" style="display: none;">
+        <h1 style="font-size: 64px; margin-bottom: 10px;">⌛</h1>
+        <h2>Este convite expirou 💔</h2>
+        <p>Os convites têm validade de 14 dias. Peça para a pessoa te enviar um novo!</p>
     </div>
 
     <!-- Script de Processamento do Convite -->

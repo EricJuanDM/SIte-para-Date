@@ -37,6 +37,10 @@
                     <label for="nomeDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Nome de quem vai receber:</label>
                     <input type="text" id="nomeDestinatario" placeholder="Ex: Ana, João, Carolina..." required>
 
+                    <!-- E-mail do Destinatário -->
+                    <label for="emailDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">E-mail do destinatário:</label>
+                    <input type="email" id="emailDestinatario" placeholder="Ex: ana@email.com" required>
+
                     <!-- Mensagem personalizada antes da pergunta -->
                     <label for="mensagemPersonalizada" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Mensagem personalizada (opcional):</label>
                     <textarea id="mensagemPersonalizada" rows="2" placeholder="Ex: Você é a pessoa mais incrível que já conheci..."></textarea>
@@ -73,7 +77,26 @@
                             <img id="imgPrev3" style="display: none;">
                             <span id="imgIcon3">💖</span>
                             <p id="imgText3">Foto 3 (Fim)</p>
-                        </div>
+                    </div>
+
+                    <!-- Upload de Imagem de Fundo -->
+                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Foto de fundo personalizada (opcional - substitui a cor sólida):</label>
+                    <div class="bg-upload-box" onclick="document.getElementById('bgInput').click()">
+                        <input type="file" id="bgInput" accept="image/*" style="display: none;">
+                        <img id="bgPrev" style="display: none; border-radius: 8px; width: 60px; height: 60px; object-fit: cover;">
+                        <span id="bgIcon">🖼️</span>
+                        <p id="bgText" style="margin-top: 0; font-size: 13px; margin-left: 10px;">Adicionar imagem de fundo</p>
+                    </div>
+
+                    <!-- Seleção de Lugares Customizados -->
+                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Opções de lugares (entre 2 e 6 opções):</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <input type="text" id="lugarEmoji" placeholder="Emoji (opcional)" style="width: 80px; margin-bottom: 0; text-align: center;">
+                        <input type="text" id="lugarNome" placeholder="Nome (ex: Sorveteria, Parque)" style="margin-bottom: 0; flex: 1;">
+                        <button type="button" class="btn-primary" id="btnAddLugar" style="height: 48px; border-radius: 14px; box-shadow: none; flex-shrink: 0;">+</button>
+                    </div>
+                    <div id="lugaresList" class="recusa-container">
+                        <!-- Gerado via JS -->
                     </div>
 
                     <!-- Opções de Recusa -->
@@ -89,13 +112,22 @@
                 </form>
             </section>
 
-            <!-- Coluna da Direita: Convites Enviados -->
-            <section class="dash-section" style="margin-bottom: 0;">
-                <h3>📅 Seus Convites Enviados</h3>
-                <div id="invitationsList" class="invitations-list">
-                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites...</p>
-                </div>
-            </section>
+            <!-- Coluna da Direita: Convites Enviados e Recebidos -->
+            <div>
+                <section class="dash-section">
+                    <h3>📅 Seus Convites Enviados</h3>
+                    <div id="invitationsList" class="invitations-list">
+                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites...</p>
+                    </div>
+                </section>
+
+                <section class="dash-section" style="margin-bottom: 0;">
+                    <h3>📬 Convites Recebidos</h3>
+                    <div id="receivedList" class="invitations-list">
+                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites recebidos...</p>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -127,6 +159,9 @@
         });
         document.getElementById('imgInput3').addEventListener('change', function() {
             previewImage(this, 'imgPrev3', 'imgIcon3', 'imgText3');
+        });
+        document.getElementById('bgInput').addEventListener('change', function() {
+            previewImage(this, 'bgPrev', 'bgIcon', 'bgText');
         });
     </script>
 </body>

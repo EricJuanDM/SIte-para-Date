@@ -7,7 +7,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { showModal } from "./modal.js";
 
-// 1. Extrair ID do convite a partir da URL (suporta caminhos dinâmicos reescritos)
+// 1. Extrair ID do convite a partir da URL
 const pathParts = window.location.pathname.split('/').filter(Boolean);
 const inviteId = pathParts[pathParts.length - 1];
 
@@ -15,10 +15,11 @@ const inviteId = pathParts[pathParts.length - 1];
 const loadingContainer = document.getElementById("loadingContainer");
 const inviteContainer = document.getElementById("inviteContainer");
 const errorContainer = document.getElementById("errorContainer");
+const expiredContainer = document.getElementById("expiredContainer");
+const bgOverlay = document.getElementById("bgOverlay");
 
 let inviteData = null;
 let tempDateData = { data: "", hora: "" };
-let recusaIndex = 0;
 
 // Inicialização
 async function loadInvite() {
@@ -37,6 +38,15 @@ async function loadInvite() {
         }
 
         inviteData = docSnap.data();
+
+        // Validar Expiração (14 dias)
+        const now = new Date();
+        const expiraEm = inviteData.expiraEm ? (inviteData.expiraEm.toDate ? inviteData.expiraEm.toDate() : new Date(inviteData.expiraEm)) : null;
+        if (expiraEm && expiraEm < now) {
+            showExpired();
+            return;
+        }
+
         applyPersonalization();
         setupEventListeners();
         showInvite();
@@ -56,12 +66,23 @@ function showError() {
     errorContainer.style.display = "flex";
 }
 
+function showExpired() {
+    loadingContainer.style.display = "none";
+    expiredContainer.style.display = "flex";
+}
+
 // Aplicar personalizações definidas pelo remetente
 function applyPersonalization() {
     const p = inviteData.personalizacao || {};
     
-    // Cor de Fundo
-    if (p.corFundo) {
+    // Imagem de Fundo Personalizada ou Cor de Fundo
+    if (p.imagemFundo) {
+        document.body.style.backgroundImage = `url('${p.imagemFundo}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundAttachment = "fixed";
+        if (bgOverlay) bgOverlay.style.display = "block";
+    } else if (p.corFundo) {
         document.body.style.backgroundImage = "none";
         document.body.style.backgroundColor = p.corFundo;
     }
@@ -90,6 +111,38 @@ function applyPersonalization() {
         if (p.imagens[1]) document.getElementById("imgStep2").src = p.imagens[1];
         if (p.imagens[2]) document.getElementById("imgStep5").src = p.imagens[2];
     }
+
+    // Renderizar Dinamicamente os Lugares Customizados
+    const placesGrid = document.getElementById("placesGrid");
+    if (placesGrid) {
+        placesGrid.innerHTML = "";
+        const lugares = p.lugares || [
+            { emoji: "🍕", nome: "Pizza" },
+            { emoji: "🍣", nome: "Sushi" }
+        ];
+
+        lugares.forEach(lugar => {
+            const div = document.createElement("div");
+            div.className = "food-item";
+            const textLugar = `${lugar.emoji} ${lugar.nome}`;
+            div.innerHTML = textLugar;
+            div.addEventListener("click", async () => {
+                nextStep(5);
+                try {
+                    const docRef = doc(db, "convites", inviteId);
+                    await updateDoc(docRef, {
+                        status: "aceito",
+                        horarioEscolhido: `${tempDateData.data} às ${tempDateData.hora}`,
+                        alimentoEscolhido: textLugar, // mapeado para Lugar Escolhido
+                        aceitoEm: serverTimestamp()
+                    });
+                } catch (err) {
+                    console.error("Erro ao salvar resposta:", err);
+                }
+            });
+            placesGrid.appendChild(div);
+        });
+    }
 }
 
 // Controle de Navegação de Passos
@@ -102,74 +155,58 @@ function setupEventListeners() {
     const btnYes1 = document.getElementById("btnYes1");
     const btnOk = document.getElementById("btnOk");
     const btnSaveTime = document.getElementById("btnSaveTime");
-    const btnNo = document.getElementById("btnNo");
-    const wrapper = document.querySelector(".buttons-wrapper");
 
     // Avançar para tela de comemoração
-    btnYes1.addEventListener("click", () => nextStep(2));
+    if (btnYes1) btnYes1.addEventListener("click", () => nextStep(2));
     
     // Avançar para escolha de data
-    btnOk.addEventListener("click", () => nextStep(3));
-
-    // Salvar data e hora temporariamente e avançar para alimentos
-    btnSaveTime.addEventListener("click", async () => {
-        const dateInput = document.getElementById("datePicker").value;
-        const timeInput = document.getElementById("timePicker").value;
-
-        if (!dateInput || !timeInput) {
-            await showModal({ type: "alert", message: "Escolha o dia e o horário direitinho! 😉" });
-            return;
-        }
-
-        tempDateData.data = dateInput.split("-").reverse().join("/");
-        tempDateData.hora = timeInput;
-        nextStep(4);
-    });
+    if (btnOk) btnOk.addEventListener("click", () => nextStep(3));
 
     // Lógica do botão de recusa "Não" (Muda o texto e foge)
-    const fugirBotao = function() {
-        const maxX = wrapper.offsetWidth - btnNo.offsetWidth;
-        const maxY = wrapper.offsetHeight + 40;
-        
-        btnNo.style.left = Math.floor(Math.random() * maxX) + 'px';
-        btnNo.style.top = (Math.floor(Math.random() * maxY) - 20) + 'px';
-        btnNo.style.right = 'auto';
+    const btnNo = document.getElementById("btnNo");
+    const wrapper = document.querySelector(".buttons-wrapper");
+    let recusaIndex = 0;
 
-        // Ciclar pelos textos personalizados de recusa
-        const opcoesRecusa = inviteData.personalizacao.opcoesRecusa || ["não...", "tem certeza? 🤔"];
-        if (opcoesRecusa.length > 0) {
-            btnNo.textContent = opcoesRecusa[recusaIndex];
-            recusaIndex = (recusaIndex + 1) % opcoesRecusa.length;
-        }
-    };
-
-    btnNo.addEventListener("mouseover", fugirBotao);
-    btnNo.addEventListener("touchstart", function(e) {
-        e.preventDefault();
-        fugirBotao();
-    });
-
-    // Itens de comida
-    const foodItems = document.querySelectorAll(".food-item");
-    foodItems.forEach(item => {
-        item.addEventListener("click", async () => {
-            const foodName = item.getAttribute("data-food");
-            nextStep(5);
+    if (btnNo && wrapper) {
+        const fugirBotao = function() {
+            const maxX = wrapper.offsetWidth - btnNo.offsetWidth;
+            const maxY = wrapper.offsetHeight + 40;
             
-            try {
-                // Atualizar o status e dados no Firestore
-                const docRef = doc(db, "convites", inviteId);
-                await updateDoc(docRef, {
-                    status: "aceito",
-                    horarioEscolhido: `${tempDateData.data} às ${tempDateData.hora}`,
-                    alimentoEscolhido: foodName,
-                    aceitoEm: serverTimestamp()
-                });
-            } catch (err) {
-                console.error("Erro ao salvar resposta no Firestore:", err);
+            btnNo.style.left = Math.floor(Math.random() * maxX) + 'px';
+            btnNo.style.top = (Math.floor(Math.random() * maxY) - 20) + 'px';
+            btnNo.style.right = 'auto';
+
+            // Ciclar pelos textos personalizados de recusa
+            const opcoesRecusa = inviteData.personalizacao.opcoesRecusa || ["não...", "tem certeza? 🤔"];
+            if (opcoesRecusa.length > 0) {
+                btnNo.textContent = opcoesRecusa[recusaIndex];
+                recusaIndex = (recusaIndex + 1) % opcoesRecusa.length;
             }
+        };
+
+        btnNo.addEventListener("mouseover", fugirBotao);
+        btnNo.addEventListener("touchstart", function(e) {
+            e.preventDefault();
+            fugirBotao();
         });
-    });
+    }
+
+    // Salvar data e hora temporariamente e avançar para escolha do lugar
+    if (btnSaveTime) {
+        btnSaveTime.addEventListener("click", async () => {
+            const dateInput = document.getElementById("datePicker").value;
+            const timeInput = document.getElementById("timePicker").value;
+
+            if (!dateInput || !timeInput) {
+                await showModal({ type: "alert", message: "Escolha o dia e o horário direitinho! 😉" });
+                return;
+            }
+
+            tempDateData.data = dateInput.split("-").reverse().join("/");
+            tempDateData.hora = timeInput;
+            nextStep(4);
+        });
+    }
 }
 
 // Iniciar carregamento do convite

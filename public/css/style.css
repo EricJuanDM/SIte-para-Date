@@ -678,3 +678,83 @@ button {
     flex: 1;
     height: 44px;
 }
+
+/* Foto de Fundo Customizada no Dashboard */
+.bg-upload-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(74, 40, 44, 0.2);
+    padding: 15px;
+    border-radius: 14px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+}
+
+.bg-upload-box:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+/* Overlay Escuro para Imagem de Fundo no Convite */
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Convite Expirado Acinzentado no Dashboard */
+.invitation-card.status-expirado {
+    border-left-color: #9e9e9e !important;
+    background-color: #fafafa;
+    opacity: 0.65;
+    filter: grayscale(0.8);
+}
+
+.status-badge.expirado {
+    background: #e0e0e0;
+    color: #616161;
+}
+
+/* Lugares Dinâmicos no Dashboard */
+.lugar-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(74, 40, 44, 0.08);
+}
+
+.lugar-item span.emoji {
+    font-size: 20px;
+}
+
+.lugar-item span.nome {
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+}
+
+.btn-remove-lugar {
+    background: none;
+    box-shadow: none;
+    color: #cc0000;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 8px;
+    height: auto;
+    width: auto;
+}
+
+.btn-remove-lugar:hover {
+    background: rgba(204, 0, 0, 0.05);
+}
