@@ -1,0 +1,588 @@
+/* 
+  DatePerfeito SaaS - Estilos Globais e Temas Premium
+  Design romântico, limpo e dinâmico com Glassmorphic
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    --font-primary: 'Poppins', sans-serif;
+    --font-title: 'Outfit', sans-serif;
+    
+    /* Cores Harmoniosas */
+    --color-bg-primary: #1e1111;
+    --color-primary: #ff8fa3;
+    --color-primary-hover: #ff708a;
+    --color-primary-light: #ffe3e8;
+    --color-secondary: #c97d8c;
+    --color-text-dark: #4a282c;
+    --color-text-light: #8f6e72;
+    --color-white: #ffffff;
+    --color-card-bg: rgba(255, 255, 255, 0.88);
+    --color-border: rgba(255, 255, 255, 0.5);
+    
+    /* Statuses */
+    --color-status-pending: #ffd166;
+    --color-status-accepted: #ff8fa3;
+    --color-status-marked: #06d6a0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-bg-primary);
+    background-image: linear-gradient(135deg, rgba(30, 17, 17, 0.85) 0%, rgba(68, 30, 36, 0.85) 100%), url('../imagens/f58.gif'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--color-text-dark);
+    padding: 20px;
+}
+
+/* Container Glassmorphic */
+.container {
+    background: var(--color-card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Para o Dashboard que precisa ser mais largo */
+.container-wide {
+    max-width: 900px;
+    padding: 40px;
+    align-items: stretch;
+    text-align: left;
+}
+
+/* Animações e transições de passos */
+.step, .panel-step {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.step.active, .panel-step.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cabeçalhos e Textos */
+h1, h2, h3 {
+    font-family: var(--font-title);
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 12px;
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 24px; }
+h3 { font-size: 18px; }
+
+p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    margin-bottom: 20px;
+}
+
+/* Imagens do Convite */
+.invite-img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(74, 40, 44, 0.15);
+    border: 3px solid var(--color-white);
+}
+
+/* Inputs e Seletores */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select,
+textarea {
+    font-family: var(--font-primary);
+    padding: 14px 16px;
+    margin-bottom: 15px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(74, 40, 44, 0.15);
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--color-text-dark);
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+    background: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(255, 143, 163, 0.25);
+}
+
+/* Color Pickers */
+.color-selectors {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.color-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+.color-field input[type="color"] {
+    width: 100%;
+    height: 42px;
+    border: 1.5px solid rgba(74, 40, 44, 0.15);
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+    padding: 2px;
+    margin-top: 5px;
+}
+
+/* Botões */
+button {
+    font-family: var(--font-primary);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+    height: 48px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 143, 163, 0.4);
+}
+
+.btn-secondary {
+    background-color: #f3ecee;
+    color: var(--color-text-dark);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+    background-color: #eae1e3;
+    transform: translateY(-2px);
+}
+
+.btn-google {
+    background-color: var(--color-white);
+    color: #444;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-top: 10px;
+    width: 100%;
+}
+
+.btn-google img {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-google:hover {
+    background-color: #f7f7f7;
+    transform: translateY(-1px);
+}
+
+/* Abas de Auth */
+.auth-tabs {
+    display: flex;
+    width: 100%;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(74, 40, 44, 0.08);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: none;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-text-light);
+    cursor: pointer;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2.5px;
+    box-shadow: none;
+    height: auto;
+    border-radius: 0;
+}
+
+.auth-tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* Dashboard Layout */
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(74, 40, 44, 0.1);
+}
+
+.dash-header h2 {
+    margin-bottom: 0;
+}
+
+.dash-content {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+}
+
+.dash-section {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 24px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+}
+
+.dash-section h3 {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Upload de Imagens Grid */
+.upload-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.upload-box {
+    aspect-ratio: 1/1;
+    border: 2px dashed rgba(74, 40, 44, 0.2);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-box:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.upload-box span {
+    font-size: 20px;
+}
+
+.upload-box p {
+    font-size: 9px;
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.upload-box img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Opções de Recusa */
+.recusa-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.recusa-item {
+    display: flex;
+    gap: 8px;
+}
+
+.recusa-item input {
+    margin-bottom: 0;
+}
+
+.btn-remove-recusa {
+    background: none;
+    box-shadow: none;
+    color: #cc0000;
+    padding: 0 10px;
+    height: 48px;
+    font-size: 18px;
+    border-radius: 14px;
+}
+
+.btn-remove-recusa:hover {
+    background: rgba(204, 0, 0, 0.05);
+}
+
+/* Lista de Convites */
+.invitations-list {
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.invitation-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-left: 6px solid var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    position: relative;
+}
+
+.invitation-card.status-pendente {
+    border-left-color: var(--color-status-pending);
+}
+
+.invitation-card.status-aceito {
+    border-left-color: var(--color-status-accepted);
+}
+
+.invitation-card.status-marcado {
+    border-left-color: var(--color-status-marked);
+}
+
+.invitation-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.invitation-card h4 {
+    font-family: var(--font-title);
+    font-size: 16px;
+    color: var(--color-text-dark);
+}
+
+.status-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.pendente {
+    background: #fff8e6;
+    color: #b28500;
+}
+
+.status-badge.aceito {
+    background: var(--color-primary-light);
+    color: #cc3a52;
+}
+
+.status-badge.marcado {
+    background: #e6fcf5;
+    color: #087f5b;
+}
+
+.invitation-details {
+    font-size: 12px;
+    color: var(--color-text-light);
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.invitation-actions button {
+    height: 36px;
+    font-size: 12px;
+    padding: 0 15px;
+    border-radius: 8px;
+}
+
+.btn-copy {
+    background: #e8f5e9;
+    color: #2e7d32;
+    box-shadow: none;
+}
+
+.btn-copy:hover {
+    background: #c8e6c9;
+}
+
+.btn-delete {
+    background: #ffebee;
+    color: #c62828;
+    box-shadow: none;
+}
+
+.btn-delete:hover {
+    background: #ffcdd2;
+}
+
+/* Botões do Convite e Fluxo do Convidado */
+.buttons-wrapper {
+    position: relative;
+    height: 60px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 20px;
+}
+
+.btn-yes {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    position: absolute;
+    left: 15px;
+    box-shadow: 0 4px 15px rgba(255, 143, 163, 0.4);
+}
+
+.btn-yes:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+}
+
+.btn-no {
+    background-color: #e2dcdc;
+    color: #7a6565;
+    position: absolute;
+    right: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Grid de Comidas */
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.food-item {
+    background: var(--color-white);
+    padding: 15px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid rgba(74, 40, 44, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.food-item:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+    transform: scale(1.03);
+}
+
+/* Links e extras */
+.auth-switch {
+    font-size: 13px;
+    margin-top: 15px;
+    color: var(--color-text-light);
+}
+
+.auth-switch a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividade Geral */
+@media (max-width: 768px) {
+    .dash-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .container-wide {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 24px;
+        border-radius: 20px;
+    }
+    
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    
+    .invite-img {
+        width: 120px;
+        height: 120px;
+    }
+}

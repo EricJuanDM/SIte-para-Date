@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DatePerfeito - Dashboard 🌸</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container container-wide">
+        <!-- Cabeçalho do Painel -->
+        <header class="dash-header">
+            <div>
+                <h2>Olá, <span id="userName">Remetente</span>! 👋</h2>
+                <p style="margin-bottom: 0; font-size: 13px;">Gerencie seus convites de date em um só lugar.</p>
+            </div>
+            <button id="btnLogout" class="btn-secondary">Sair 🚪</button>
+        </header>
+
+        <main class="dash-content">
+            <!-- Coluna da Esquerda: Criar e Personalizar Convite -->
+            <section class="dash-section">
+                <h3>✨ Criar Novo Convite</h3>
+                <form id="inviteForm" onsubmit="return false;">
+                    <!-- Nome do Destinatário -->
+                    <label for="nomeDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Nome de quem vai receber:</label>
+                    <input type="text" id="nomeDestinatario" placeholder="Ex: Ana, João, Carolina..." required>
+
+                    <!-- Mensagem personalizada antes da pergunta -->
+                    <label for="mensagemPersonalizada" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Mensagem personalizada (opcional):</label>
+                    <textarea id="mensagemPersonalizada" rows="2" placeholder="Ex: Você é a pessoa mais incrível que já conheci..."></textarea>
+
+                    <!-- Seletores de Cores -->
+                    <div class="color-selectors">
+                        <div class="color-field">
+                            <label>Cor do Fundo</label>
+                            <input type="color" id="corFundo" value="#1e1111">
+                        </div>
+                        <div class="color-field">
+                            <label>Cor do Card</label>
+                            <input type="color" id="corCard" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <!-- Upload de Imagens -->
+                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Fotos personalizadas (opcionais - substitui memes padrão):</label>
+                    <div class="upload-grid">
+                        <div class="upload-box" onclick="document.getElementById('imgInput1').click()">
+                            <input type="file" id="imgInput1" accept="image/*" style="display: none;">
+                            <img id="imgPrev1" style="display: none;">
+                            <span id="imgIcon1">📸</span>
+                            <p id="imgText1">Foto 1 (Início)</p>
+                        </div>
+                        <div class="upload-box" onclick="document.getElementById('imgInput2').click()">
+                            <input type="file" id="imgInput2" accept="image/*" style="display: none;">
+                            <img id="imgPrev2" style="display: none;">
+                            <span id="imgIcon2">🎉</span>
+                            <p id="imgText2">Foto 2 (Sucesso)</p>
+                        </div>
+                        <div class="upload-box" onclick="document.getElementById('imgInput3').click()">
+                            <input type="file" id="imgInput3" accept="image/*" style="display: none;">
+                            <img id="imgPrev3" style="display: none;">
+                            <span id="imgIcon3">💖</span>
+                            <p id="imgText3">Foto 3 (Fim)</p>
+                        </div>
+                    </div>
+
+                    <!-- Opções de Recusa -->
+                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Opções de recusa para o "não" (entre 2 e 5 opções):</label>
+                    <div id="recusaList" class="recusa-container">
+                        <!-- Gerado via JS -->
+                    </div>
+                    <button type="button" class="btn-secondary" id="btnAddRecusa" style="height: 38px; font-size: 13px; padding: 0 15px; margin-bottom: 20px; align-self: flex-start;">
+                        + Adicionar Opção
+                    </button>
+
+                    <button type="submit" id="btnSubmitInvite" class="btn-primary" style="width: 100%;">Gerar Link de Convite 💕</button>
+                </form>
+            </section>
+
+            <!-- Coluna da Direita: Convites Enviados -->
+            <section class="dash-section" style="margin-bottom: 0;">
+                <h3>📅 Seus Convites Enviados</h3>
+                <div id="invitationsList" class="invitations-list">
+                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Script do Dashboard -->
+    <script type="module" src="js/dashboard.js"></script>
+    <script>
+        // Função utilitária global para preview de imagens no front-end
+        window.previewImage = function(input, imgId, iconId, textId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(imgId);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById(iconId).style.display = 'none';
+                    document.getElementById(textId).style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // Amarrar os inputs de imagens para fazer o preview dinâmico
+        document.getElementById('imgInput1').addEventListener('change', function() {
+            previewImage(this, 'imgPrev1', 'imgIcon1', 'imgText1');
+        });
+        document.getElementById('imgInput2').addEventListener('change', function() {
+            previewImage(this, 'imgPrev2', 'imgIcon2', 'imgText2');
+        });
+        document.getElementById('imgInput3').addEventListener('change', function() {
+            previewImage(this, 'imgPrev3', 'imgIcon3', 'imgText3');
+        });
+    </script>
+</body>
+</html>

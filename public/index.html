@@ -3,282 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Request 🌸</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-image: url('imagens/f58.gif'); 
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #5c3a3a;
-            overflow: hidden;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            width: 90%;
-            max-width: 420px;
-            height: 480px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .step { 
-            display: none; 
-            width: 100%; 
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.5s ease; 
-        }
-        
-        .step.active { display: flex; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        img {
-            width: 130px;
-            height: 130px;
-            object-fit: cover;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        h2 { font-weight: 700; margin-bottom: 12px; font-size: 22px; color: #4a1c1c; margin-top: 0;}
-        p { font-size: 14px; margin-bottom: 15px; }
-
-        .buttons-wrapper {
-            position: relative;
-            height: 50px;
-            width: 100%;
-            max-width: 280px;
-            margin-top: 10px;
-        }
-
-        button {
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer;
-            font-size: 15px;
-            height: 45px;
-            box-sizing: border-box;
-        }
-
-        .btn-yes {
-            background-color: #ffb6c1;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
-            position: absolute;
-            left: 15px;
-            transition: transform 0.2s ease;
-        }
-        .btn-yes:hover { transform: scale(1.05); background-color: #ff9eaa; }
-
-        .btn-no {
-            background-color: #e2dcdc;
-            color: #7a6565;
-            position: absolute;
-            right: 15px;
-            transition: left 0.1s ease-out, top 0.1s ease-out;
-        }
-
-        input, select {
-            font-family: 'Poppins', sans-serif;
-            padding: 12px;
-            margin: 6px 0;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            width: 100%;
-            box-sizing: border-box;
-            background: #fff;
-            color: #5c3a3a;
-            font-size: 14px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .food-item {
-            background: #fff;
-            padding: 12px 8px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            border: 1px solid #eee;
-            transition: all 0.2s ease;
-        }
-
-        .food-item:hover {
-            background: #ffb6c1;
-            color: white;
-            border-color: #ffb6c1;
-        }
-
-        @media (max-width: 480px) {
-            .container { padding: 20px; height: 450px; }
-            h2 { font-size: 19px; }
-            img { width: 110px; height: 110px; }
-            .food-item { font-size: 12px; padding: 10px 6px; }
-        }
-    </style>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCCquHW_OM6SPzex2Yef6Veqp5OOnAXnj4",
-            authDomain: "date-perfeito-5925e.firebaseapp.com",
-            projectId: "date-perfeito-5925e",
-            storageBucket: "date-perfeito-5925e.firebasestorage.app",
-            messagingSenderId: "958617736891",
-            appId: "1:958617736891:web:d45e2a7f8b9b94b4ccfb9e"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.tempDateData = { data: '', hora: '' };
-
-        window.saveDateTime = function() {
-            const dateInput = document.getElementById('datePicker').value;
-            const timeInput = document.getElementById('timePicker').value;
-
-            if(!dateInput || !timeInput) {
-                alert("Escolha o dia e o horário direitinho! 😉");
-                return;
-            }
-
-            window.tempDateData.data = dateInput.split('-').reverse().join('/');
-            window.tempDateData.hora = timeInput;
-            nextStep(3, 4);
-        };
-
-        window.saveFoodAndFinish = async function(foodName) {
-            nextStep(4, 5);
-            try {
-                await addDoc(collection(db, "datesMarcados"), {
-                    data: window.tempDateData.data,
-                    hora: window.tempDateData.hora,
-                    comida: foodName,
-                    criadoEm: new Date()
-                });
-            } catch (e) {
-                console.error("Erro ao salvar no Firestore: ", e);
-            }
-        };
-
-        window.nextStep = function(current, next) {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + next).classList.add('active');
-        }
-    </script>
+    <title>DatePerfeito - Faça seu Login 🌸</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
     <div class="container">
+        <h1>DatePerfeito 🌸</h1>
+        <p>Crie convites personalizados e surpreenda quem você ama.</p>
         
-        <div id="step1" class="step active">
-            <img src="imagens/Gatinho.webp" alt="Gatinho">
-            <h2>Você quer sair comigo? 🌸</h2>
-            <div class="buttons-wrapper">
-                <button class="btn-yes" onclick="nextStep(1, 2)">SIM 💕</button>
-                <button class="btn-no" id="btnNo">não...</button>
-            </div>
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+            <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Cadastrar</button>
         </div>
 
-        <div id="step2" class="step">
-            <img src="imagens/Bob Esponja comemorando.webp" alt="Bob Esponja">
-            <h2>SÉRIO QUE VOCÊ DISSE SIM?? 😭</h2>
-            <p>Eu já tava pronto pra você dizer não 😅</p>
-            <button class="btn-yes" style="position: static;" onclick="nextStep(2, 3)">ok ok! ➔</button>
+        <!-- Formulário de Login -->
+        <form id="loginForm" class="step active" onsubmit="return false;">
+            <input type="email" id="loginEmail" placeholder="Seu email" required autocomplete="email">
+            <input type="password" id="loginPassword" placeholder="Sua senha" required autocomplete="current-password">
+            <button type="submit" class="btn-primary" style="width: 100%;">Entrar ♥</button>
+        </form>
+
+        <!-- Formulário de Cadastro -->
+        <form id="registerForm" class="step" onsubmit="return false;">
+            <input type="text" id="registerName" placeholder="Seu nome" required autocomplete="name">
+            <input type="email" id="registerEmail" placeholder="Seu email" required autocomplete="email">
+            <input type="password" id="registerPassword" placeholder="Escolha uma senha" required autocomplete="new-password">
+            <button type="submit" class="btn-primary" style="width: 100%;">Criar Conta ♥</button>
+        </form>
+
+        <!-- Divisor -->
+        <div style="margin: 20px 0 10px; width: 100%; border-top: 1px solid rgba(74, 40, 44, 0.1); position: relative;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #fdfafb; padding: 0 10px; font-size: 11px; color: var(--color-text-light);">ou</span>
         </div>
 
-        <div id="step3" class="step">
-            <h2>Então... quando você tá livre? 🗓️🐾</h2>
-            <input type="date" id="datePicker">
-            <select id="timePicker">
-                <option value="" disabled selected>Escolha um horário...</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
-                <option value="19:30">19:30</option>
-                <option value="20:00">20:00</option>
-                <option value="20:30">20:30</option>
-                <option value="21:00">21:00</option>
-                <option value="21:30">21:30</option>
-            </select>
-            <button class="btn-yes" style="position: static; margin-top: 15px; width: 100%;" onclick="window.saveDateTime()">marcar! ♥</button>
-        </div>
-
-        <div id="step4" class="step">
-            <h2>O que vamos comer? 🍜✨</h2>
-            <div class="food-grid">
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍕 Pizza')">🍕 Pizza</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍣 Sushi')">🍣 Sushi</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍔 Méqui')">🍔 Méqui</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍝 Massa')">🍝 Massa</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🌮 Tacos')">🌮 Tacos</div>
-                <div class="food-item" onclick="window.saveFoodAndFinish('🍻 Barzinho')">🍻 Barzinho</div>
-            </div>
-        </div>
-
-        <div id="step5" class="step">
-            <img src="imagens/Shrek sorrindo.gif" alt="Shrek">
-            <h2 style="font-size: 20px;">Ainda bem que não disse não.</h2>
-            <p style="font-size: 12px; color: #666;">Te vejo em breve!</p>
-        </div>
-
+        <button type="button" id="btnGoogle" class="btn-google">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="Google Logo">
+            Entrar com o Google
+        </button>
     </div>
 
+    <!-- Script de Autenticação -->
+    <script type="module" src="js/auth.js"></script>
     <script>
-        const btnNo = document.getElementById('btnNo');
-        const wrapper = document.querySelector('.buttons-wrapper');
-        
-        const fugirBotao = function() {
-            const maxX = wrapper.offsetWidth - btnNo.offsetWidth;
-            const maxY = wrapper.offsetHeight + 40;
-            btnNo.style.left = Math.floor(Math.random() * maxX) + 'px';
-            btnNo.style.top = (Math.floor(Math.random() * maxY) - 20) + 'px';
-            btnNo.style.right = 'auto';
-        };
+        window.switchTab = function(type) {
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+            const formLogin = document.getElementById('loginForm');
+            const formRegister = document.getElementById('registerForm');
 
-        btnNo.addEventListener('mouseover', fugirBotao);
-        btnNo.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            fugirBotao();
-        });
+            if (type === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                formLogin.classList.add('active');
+                formRegister.classList.remove('active');
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                formRegister.classList.add('active');
+                formLogin.classList.remove('active');
+            }
+        }
     </script>
 </body>
 </html>

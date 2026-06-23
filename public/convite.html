@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Convite Especial para Você... 🌸</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 10px;
+        }
+        .container {
+            height: 480px;
+            max-width: 420px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Container de Carregamento inicial -->
+    <div id="loadingContainer" class="container">
+        <h2 style="font-size: 20px;">Carregando convite... 🌸</h2>
+        <p>Buscando surpresa romântica na nuvem...</p>
+    </div>
+
+    <!-- Container do Convite Romântico -->
+    <div id="inviteContainer" class="container" style="display: none;">
+        
+        <!-- Passo 1: Pergunta inicial -->
+        <div id="step1" class="step active">
+            <img id="imgStep1" src="/imagens/Gatinho.webp" alt="Gatinho" class="invite-img">
+            <p id="customMessage" style="font-size: 13px; font-weight: 500; margin-bottom: 10px; color: var(--color-text-light); display: none;"></p>
+            <h2 id="mainQuestion">Você quer sair comigo? 🌸</h2>
+            <div class="buttons-wrapper">
+                <button class="btn-yes" id="btnYes1">SIM 💕</button>
+                <button class="btn-no" id="btnNo">não...</button>
+            </div>
+        </div>
+
+        <!-- Passo 2: Celebração -->
+        <div id="step2" class="step">
+            <img id="imgStep2" src="/imagens/Bob Esponja comemorando.webp" alt="Bob Esponja" class="invite-img">
+            <h2>SÉRIO QUE VOCÊ DISSE SIM?? 😭</h2>
+            <p>Eu já estava preparado para você dizer não 😅</p>
+            <button class="btn-yes" id="btnOk" style="position: static;">ok ok! ➔</button>
+        </div>
+
+        <!-- Passo 3: Escolha do Horário -->
+        <div id="step3" class="step">
+            <h2>Então... quando você está livre? 🗓️🐾</h2>
+            <input type="date" id="datePicker">
+            <select id="timePicker">
+                <option value="" disabled selected>Escolha um horário...</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="19:30">19:30</option>
+                <option value="20:00">20:00</option>
+                <option value="20:30">20:30</option>
+                <option value="21:00">21:00</option>
+                <option value="21:30">21:30</option>
+            </select>
+            <button class="btn-yes" id="btnSaveTime" style="position: static; margin-top: 15px; width: 100%;">Marcar! ♥</button>
+        </div>
+
+        <!-- Passo 4: Escolha de Comida -->
+        <div id="step4" class="step">
+            <h2>O que vamos comer? 🍜✨</h2>
+            <div class="food-grid">
+                <div class="food-item" data-food="🍕 Pizza">🍕 Pizza</div>
+                <div class="food-item" data-food="🍣 Sushi">🍣 Sushi</div>
+                <div class="food-item" data-food="🍔 Méqui">🍔 Méqui</div>
+                <div class="food-item" data-food="🍝 Massa">🍝 Massa</div>
+                <div class="food-item" data-food="🌮 Tacos">🌮 Tacos</div>
+                <div class="food-item" data-food="🍻 Barzinho">🍻 Barzinho</div>
+            </div>
+        </div>
+
+        <!-- Passo 5: Confirmação Final -->
+        <div id="step5" class="step">
+            <img id="imgStep5" src="/imagens/Shrek sorrindo.gif" alt="Shrek" class="invite-img">
+            <h2 style="font-size: 20px;">Ainda bem que não disse não!</h2>
+            <p style="font-size: 12px; color: var(--color-text-light);">Tudo marcado. Te vejo em breve! 💕</p>
+        </div>
+
+    </div>
+
+    <!-- Container de Convite Não Encontrado / Erro -->
+    <div id="errorContainer" class="container" style="display: none;">
+        <h1 style="font-size: 64px; margin-bottom: 10px;">💔</h1>
+        <h2>Convite não encontrado</h2>
+        <p>O link pode estar quebrado, expirado ou ter sido excluído pelo remetente.</p>
+    </div>
+
+    <!-- Script de Processamento do Convite -->
+    <script type="module" src="/js/convite.js"></script>
+</body>
+</html>
