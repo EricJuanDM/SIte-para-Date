@@ -24,10 +24,25 @@ const recusaList = document.getElementById("recusaList");
 const btnAddRecusa = document.getElementById("btnAddRecusa");
 
 let recusaCount = 0;
-
 let unsubscribeSent = null;
 let unsubscribeReceived = null;
 let userNome = "Remetente";
+
+// 0. Alternância de Abas do Dashboard
+window.switchDashboardTab = function(tabId) {
+    document.querySelectorAll(".dashboard-tab-content").forEach(el => {
+        el.classList.remove("active");
+    });
+    document.querySelectorAll(".tab-button").forEach(el => {
+        el.classList.remove("active");
+    });
+
+    const activeTab = document.getElementById(`tab-${tabId}`);
+    const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+
+    if (activeTab) activeTab.classList.add("active");
+    if (activeBtn) activeBtn.classList.add("active");
+};
 
 // 1. Controle de Lugares Dinâmicos
 function addLugarItem(emoji, nome) {
@@ -132,7 +147,7 @@ function updateRecusaPlaceholders() {
     });
 }
 
-// Iniciar com opções padrão
+// Iniciar com opções de recusa padrão
 addRecusaField("não...");
 addRecusaField("tem certeza? 🤔");
 
@@ -175,13 +190,13 @@ function setupSentListener(userId) {
         if (snapshot.empty) {
             listDiv.innerHTML = `
                 <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">
-                    Você ainda não enviou nenhum convite. Crie um ao lado! 🌸
+                    Você ainda não enviou nenhum convite. Crie um na primeira aba! 🌸
                 </p>
             `;
             return;
         }
         
-        // Ordenação manual em memória para evitar erro de índice composto
+        // Ordenação manual em memória
         const docSnaps = [];
         snapshot.forEach(docSnap => docSnaps.push(docSnap));
         docSnaps.sort((a, b) => {
@@ -197,7 +212,6 @@ function setupSentListener(userId) {
             const data = docSnap.data();
             const id = docSnap.id;
             
-            // Checar expiração
             const expiraEm = data.expiraEm ? (data.expiraEm.toDate ? data.expiraEm.toDate() : new Date(data.expiraEm)) : null;
             const isExpired = expiraEm && expiraEm < now;
 
@@ -210,46 +224,44 @@ function setupSentListener(userId) {
                 statusClass = "expirado";
                 detailsHtml = `
                     <div class="invitation-details">
-                        ⌛ Convite Expirado (validade de 14 dias finalizada).
+                        ⌛ <strong>Expirado</strong>
+                    </div>
+                `;
+            } else if (data.status === "aceito" || data.horarioEscolhido) {
+                statusText = "Aceito";
+                statusClass = "aceito";
+                detailsHtml = `
+                    <div class="invitation-details">
+                        ✅ <strong>${data.nomeDestinatario} aceitou!</strong><br>
+                        📅 ${data.horarioEscolhido || "A definir"}<br>
+                        📍 ${data.alimentoEscolhido || "A definir"}
                     </div>
                 `;
             } else {
-                if (data.status === "aceito") {
-                    statusText = "Aceito";
-                    statusClass = "aceito";
-                }
-                if (data.horarioEscolhido) {
-                    statusText = "Horário Marcado";
-                    statusClass = "marcado";
-                }
-
-                if (data.status === "aceito" || data.horarioEscolhido) {
-                    detailsHtml = `
-                        <div class="invitation-details">
-                            ✅ <strong>${data.nomeDestinatario}</strong> aceitou!<br>
-                            📅 <strong>Quando:</strong> ${data.horarioEscolhido || "A definir"}<br>
-                            📍 <strong>Lugar:</strong> ${data.alimentoEscolhido || "A definir"}
-                        </div>
-                    `;
-                } else {
-                    detailsHtml = `
-                        <div class="invitation-details">
-                            ⏳ Aguardando resposta de <strong>${data.nomeDestinatario}</strong>...
-                        </div>
-                    `;
-                }
+                statusText = "Pendente";
+                statusClass = "pendente";
+                detailsHtml = `
+                    <div class="invitation-details">
+                        ⏳ Aguardando resposta
+                    </div>
+                `;
             }
+
+            const expiraFormat = expiraEm ? expiraEm.toLocaleDateString('pt-BR') : 'A definir';
             
             const card = document.createElement("div");
             card.className = `invitation-card status-${statusClass} ${isExpired ? 'status-expirado' : ''}`;
             card.innerHTML = `
                 <div class="invitation-card-header">
-                    <h4>Para: ${data.nomeDestinatario}</h4>
+                    <h4>Para: ${data.nomeDestinatario} (${data.emailDestinatario || 'Sem email'})</h4>
                     <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
                 ${detailsHtml}
+                <div style="font-size: 11px; margin-top: 8px; color: var(--color-text-light);">
+                    Validade: ${expiraFormat}
+                </div>
                 <div class="invitation-actions">
-                    ${!isExpired ? `<button class="btn-copy" onclick="copyInviteLink('${id}', this)">Copiar Link 🔗</button>` : ""}
+                    ${!isExpired ? `<button class="btn-copy btn-primary" onclick="copyInviteLink('${id}', this)">Copiar Link 🔗</button>` : ""}
                     <button class="btn-delete" onclick="deleteInvite('${id}')">Excluir 🗑️</button>
                 </div>
             `;
@@ -262,9 +274,10 @@ function setupSentListener(userId) {
 
 // 4. Monitoramento em tempo real dos convites Recebidos
 function setupReceivedListener(userEmail) {
+    const emailRef = userEmail.toLowerCase().trim();
     const q = query(
         collection(db, "convites"),
-        where("emailDestinatario", "==", userEmail)
+        where("emailDestinatario", "==", emailRef)
     );
 
     unsubscribeReceived = onSnapshot(q, (snapshot) => {
@@ -309,43 +322,36 @@ function setupReceivedListener(userEmail) {
                         ⌛ Este convite expirou antes de ser respondido.
                     </div>
                 `;
+            } else if (data.status === "aceito" || data.horarioEscolhido) {
+                statusText = "Aceito";
+                statusClass = "aceito";
+                detailsHtml = `
+                    <div class="invitation-details">
+                        💖 Você marcou este date!<br>
+                        📅 <strong>Quando:</strong> ${data.horarioEscolhido || "A definir"}<br>
+                        📍 <strong>Lugar:</strong> ${data.alimentoEscolhido || "A definir"}
+                    </div>
+                `;
             } else {
-                if (data.status === "aceito") {
-                    statusText = "Aceito";
-                    statusClass = "aceito";
-                }
-                if (data.horarioEscolhido) {
-                    statusText = "Horário Marcado";
-                    statusClass = "marcado";
-                }
-
-                if (data.status === "aceito" || data.horarioEscolhido) {
-                    detailsHtml = `
-                        <div class="invitation-details">
-                            💖 Você marcou este date!<br>
-                            📅 <strong>Quando:</strong> ${data.horarioEscolhido || "A definir"}<br>
-                            📍 <strong>Lugar:</strong> ${data.alimentoEscolhido || "A definir"}
-                        </div>
-                    `;
-                } else {
-                    detailsHtml = `
-                        <div class="invitation-details">
-                            📬 <strong>${data.remetenteNome || "Alguém"}</strong> te convidou para sair!
-                        </div>
-                    `;
-                }
+                statusText = "Pendente";
+                statusClass = "pendente";
+                detailsHtml = `
+                    <div class="invitation-details">
+                        📬 <strong>${data.remetenteNome || "Alguém"}</strong> te convidou para sair!
+                    </div>
+                `;
             }
 
             const card = document.createElement("div");
             card.className = `invitation-card status-${statusClass} ${isExpired ? 'status-expirado' : ''}`;
             card.innerHTML = `
                 <div class="invitation-card-header">
-                    <h4>De: ${data.remetenteNome || "Alguém"}</h4>
+                    <h4>De: ${data.remetenteNome || "Alguém"} (${data.remetenteEmail || 'Sem email'})</h4>
                     <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
                 ${detailsHtml}
                 <div class="invitation-actions">
-                    ${(!isExpired && data.status !== "aceito" && !data.horarioEscolhido) ? `<a href="/convite/${id}" class="btn-copy" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Ver Convite 📬</a>` : ""}
+                    ${(!isExpired && data.status !== "aceito" && !data.horarioEscolhido) ? `<a href="/convite/${id}" class="btn-copy btn-primary" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; height: 36px; padding: 0 15px; border-radius: 8px;">Ver Convite 📬</a>` : ""}
                 </div>
             `;
             receivedDiv.appendChild(card);
@@ -407,7 +413,7 @@ if (inviteForm) {
         e.preventDefault();
         
         const nomeDestinatario = document.getElementById("nomeDestinatario").value.trim();
-        const emailDestinatario = document.getElementById("emailDestinatario").value.trim();
+        const emailDestinatario = document.getElementById("emailDestinatario").value.trim().toLowerCase();
         const mensagemPersonalizada = document.getElementById("mensagemPersonalizada").value.trim();
         const corFundo = document.getElementById("corFundo").value;
         const corCard = document.getElementById("corCard").value;
@@ -449,6 +455,7 @@ if (inviteForm) {
             const docRef = await addDoc(collection(db, "convites"), {
                 remetenteId: user.uid,
                 remetenteNome: userNome,
+                remetenteEmail: user.email,
                 nomeDestinatario: nomeDestinatario,
                 emailDestinatario: emailDestinatario,
                 status: "pendente",
@@ -594,9 +601,17 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById("userName").textContent = userNome;
     }
 
-    // Inicializar listeners em tempo real
+    // Inicializar listeners em tempo real com validações robustas
     setupSentListener(user.uid);
-    setupReceivedListener(user.email);
+    if (user.email) {
+        setupReceivedListener(user.email.toLowerCase().trim());
+    } else {
+        document.getElementById("receivedList").innerHTML = `
+            <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">
+                Email não identificado para o carregamento de recebidos.
+            </p>
+        `;
+    }
 
     // Rodar limpeza silenciosa de expirados
     cleanExpiredInvites(user.uid);

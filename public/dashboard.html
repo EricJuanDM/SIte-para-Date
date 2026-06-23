@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DatePerfeito - Dashboard 🌸</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="dashboard-body">
     <div class="container container-wide">
         <!-- Cabeçalho do Painel -->
         <header class="dash-header">
@@ -17,48 +17,64 @@
             <button id="btnLogout" class="btn-secondary">Sair 🚪</button>
         </header>
 
-        <main class="dash-content">
-            <!-- Coluna da Esquerda: Criar e Personalizar Convite -->
+        <!-- Menu de Abas Superior (Vira empilhado no mobile) -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" id="tabBtn-criar" onclick="switchDashboardTab('criar')">✨ Criar Convite</button>
+            <button class="tab-button" id="tabBtn-enviados" onclick="switchDashboardTab('enviados')">📤 Convites Enviados</button>
+            <button class="tab-button" id="tabBtn-recebidos" onclick="switchDashboardTab('recebidos')">📬 Convites Recebidos</button>
+        </nav>
+
+        <!-- Container do link gerado destacado (compartilhado e exibido no topo do formulário) -->
+        <div id="generatedLinkContainer" style="display: none; background: #e8f5e9; border: 1.5px solid #a5d6a7; padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: left;">
+            <h4 style="color: #2e7d32; margin-bottom: 4px; font-size: 15px; font-family: var(--font-title); font-weight: 700;">🎉 Convite Criado com Sucesso!</h4>
+            <p style="color: #4caf50; font-size: 12px; margin-bottom: 12px;">Copie o link abaixo e envie para a pessoa especial:</p>
+            <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                <input type="text" id="generatedLinkInput" readonly style="margin-bottom: 0; flex: 1; border-color: #a5d6a7; text-align: left; background: #fff; font-size: 14px; padding: 10px 12px;">
+                <button type="button" class="btn-primary" id="btnCopyGenerated" style="height: 44px; background-color: #2e7d32; border-radius: 10px; font-size: 13px; padding: 0 15px; box-shadow: none; flex-shrink: 0;">Copiar Link</button>
+            </div>
+        </div>
+
+        <!-- ABA 1 — ✨ CRIAR CONVITE -->
+        <div id="tab-criar" class="dashboard-tab-content active">
             <section class="dash-section">
-                <h3>✨ Criar Novo Convite</h3>
-
-                <!-- Container do link gerado (inicialmente oculto) -->
-                <div id="generatedLinkContainer" style="display: none; background: #e8f5e9; border: 1.5px solid #a5d6a7; padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: left;">
-                    <h4 style="color: #2e7d32; margin-bottom: 4px; font-size: 15px; font-family: var(--font-title); font-weight: 700;">🎉 Convite Criado com Sucesso!</h4>
-                    <p style="color: #4caf50; font-size: 12px; margin-bottom: 12px;">Copie o link abaixo e envie para a pessoa especial:</p>
-                    <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
-                        <input type="text" id="generatedLinkInput" readonly style="margin-bottom: 0; flex: 1; border-color: #a5d6a7; text-align: left; background: #fff; font-size: 14px; padding: 10px 12px;">
-                        <button type="button" class="btn-primary" id="btnCopyGenerated" style="height: 44px; background-color: #2e7d32; border-radius: 10px; font-size: 13px; padding: 0 15px; box-shadow: none; flex-shrink: 0;">Copiar Link</button>
-                    </div>
-                </div>
-
+                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">✨ Novo Convite Personalizado</h3>
                 <form id="inviteForm" onsubmit="return false;">
-                    <!-- Nome do Destinatário -->
-                    <label for="nomeDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Nome de quem vai receber:</label>
+                    
+                    <!-- 1. Nome de quem vai receber -->
+                    <label for="nomeDestinatario">Nome do destinatário:</label>
                     <input type="text" id="nomeDestinatario" placeholder="Ex: Ana, João, Carolina..." required>
 
-                    <!-- E-mail do Destinatário -->
-                    <label for="emailDestinatario" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">E-mail do destinatário:</label>
+                    <!-- 2. E-mail do destinatário -->
+                    <label for="emailDestinatario">E-mail do destinatário:</label>
                     <input type="email" id="emailDestinatario" placeholder="Ex: ana@email.com" required>
 
-                    <!-- Mensagem personalizada antes da pergunta -->
-                    <label for="mensagemPersonalizada" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block;">Mensagem personalizada (opcional):</label>
-                    <textarea id="mensagemPersonalizada" rows="2" placeholder="Ex: Você é a pessoa mais incrível que já conheci..."></textarea>
+                    <!-- 3. Mensagem personalizada (opcional) -->
+                    <label for="mensagemPersonalizada">Mensagem personalizada antes da pergunta (opcional):</label>
+                    <textarea id="mensagemPersonalizada" rows="3" placeholder="Ex: Você é a pessoa mais especial do meu mundo..."></textarea>
 
-                    <!-- Seletores de Cores -->
-                    <div class="color-selectors">
+                    <!-- 4. Cores (fundo e card) — lado a lado -->
+                    <div class="color-picker-row">
                         <div class="color-field">
-                            <label>Cor do Fundo</label>
+                            <label for="corFundo">Cor do Fundo</label>
                             <input type="color" id="corFundo" value="#1e1111">
                         </div>
                         <div class="color-field">
-                            <label>Cor do Card</label>
+                            <label for="corCard">Cor do Card</label>
                             <input type="color" id="corCard" value="#ffffff">
                         </div>
                     </div>
 
-                    <!-- Upload de Imagens -->
-                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Fotos personalizadas (opcionais - substitui memes padrão):</label>
+                    <!-- 5. Foto de fundo (upload) — seção separada com preview -->
+                    <label>Foto de fundo personalizada (opcional - substitui a cor de fundo sólida):</label>
+                    <div class="bg-upload-box" onclick="document.getElementById('bgInput').click()">
+                        <input type="file" id="bgInput" accept="image/*" style="display: none;">
+                        <img id="bgPrev" style="display: none; border-radius: 8px; width: 60px; height: 60px; object-fit: cover;">
+                        <span id="bgIcon">🖼️</span>
+                        <p id="bgText" style="margin-top: 0; font-size: 13px; margin-left: 10px;">Subir foto de fundo</p>
+                    </div>
+
+                    <!-- 6. Fotos personalizadas (3 slots) — grid 3 colunas -->
+                    <label style="margin-top: 15px;">Fotos românticas/memes (substituem as imagens padrão):</label>
                     <div class="upload-grid">
                         <div class="upload-box" onclick="document.getElementById('imgInput1').click()">
                             <input type="file" id="imgInput1" accept="image/*" style="display: none;">
@@ -77,64 +93,63 @@
                             <img id="imgPrev3" style="display: none;">
                             <span id="imgIcon3">💖</span>
                             <p id="imgText3">Foto 3 (Fim)</p>
+                        </div>
                     </div>
 
-                    <!-- Upload de Imagem de Fundo -->
-                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Foto de fundo personalizada (opcional - substitui a cor sólida):</label>
-                    <div class="bg-upload-box" onclick="document.getElementById('bgInput').click()">
-                        <input type="file" id="bgInput" accept="image/*" style="display: none;">
-                        <img id="bgPrev" style="display: none; border-radius: 8px; width: 60px; height: 60px; object-fit: cover;">
-                        <span id="bgIcon">🖼️</span>
-                        <p id="bgText" style="margin-top: 0; font-size: 13px; margin-left: 10px;">Adicionar imagem de fundo</p>
+                    <!-- 7. Lugares personalizados (emoji + nome) — seção clara -->
+                    <label style="margin-top: 15px;">Lugares sugeridos para o date (entre 2 e 6 opções):</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+                        <input type="text" id="lugarEmoji" placeholder="Emoji (opcional)" style="width: 75px; margin-bottom: 0; text-align: center;">
+                        <input type="text" id="lugarNome" placeholder="Nome (ex: Sorveteria Central, Parque)" style="margin-bottom: 0; flex: 1;">
+                        <button type="button" class="btn-primary" id="btnAddLugar" style="height: 48px; border-radius: 12px; box-shadow: none; flex-shrink: 0;">+</button>
+                    </div>
+                    <div id="lugaresList" class="recusa-container" style="margin-bottom: 20px;">
+                        <!-- Injetado dinamicamente -->
                     </div>
 
-                    <!-- Seleção de Lugares Customizados -->
-                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Opções de lugares (entre 2 e 6 opções):</label>
-                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                        <input type="text" id="lugarEmoji" placeholder="Emoji (opcional)" style="width: 80px; margin-bottom: 0; text-align: center;">
-                        <input type="text" id="lugarNome" placeholder="Nome (ex: Sorveteria, Parque)" style="margin-bottom: 0; flex: 1;">
-                        <button type="button" class="btn-primary" id="btnAddLugar" style="height: 48px; border-radius: 14px; box-shadow: none; flex-shrink: 0;">+</button>
-                    </div>
-                    <div id="lugaresList" class="recusa-container">
-                        <!-- Gerado via JS -->
-                    </div>
-
-                    <!-- Opções de Recusa -->
-                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;">Opções de recusa para o "não" (entre 2 e 5 opções):</label>
+                    <!-- 8. Opções do botão "não" (frases engraçadas) — seção separada -->
+                    <label style="margin-top: 15px;">Frases engraçadas para o botão "Não" (entre 2 e 5 opções):</label>
                     <div id="recusaList" class="recusa-container">
-                        <!-- Gerado via JS -->
+                        <!-- Injetado dinamicamente -->
                     </div>
-                    <button type="button" class="btn-secondary" id="btnAddRecusa" style="height: 38px; font-size: 13px; padding: 0 15px; margin-bottom: 20px; align-self: flex-start;">
-                        + Adicionar Opção
+                    <button type="button" class="btn-secondary" id="btnAddRecusa" style="height: 38px; font-size: 13px; padding: 0 15px; margin-bottom: 25px; align-self: flex-start;">
+                        + Adicionar Frase
                     </button>
 
-                    <button type="submit" id="btnSubmitInvite" class="btn-primary" style="width: 100%;">Gerar Link de Convite 💕</button>
+                    <!-- 9. Botão grande "Gerar Convite" centralizado -->
+                    <div style="display: flex; justify-content: center; width: 100%; margin-top: 25px;">
+                        <button type="submit" id="btnSubmitInvite" class="btn-primary" style="width: 100%; max-width: 320px; font-size: 16px;">Gerar Convite 💕</button>
+                    </div>
                 </form>
             </section>
+        </div>
 
-            <!-- Coluna da Direita: Convites Enviados e Recebidos -->
-            <div>
-                <section class="dash-section">
-                    <h3>📅 Seus Convites Enviados</h3>
-                    <div id="invitationsList" class="invitations-list">
-                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites...</p>
-                    </div>
-                </section>
+        <!-- ABA 2 — 📤 CONVITES ENVIADOS -->
+        <div id="tab-enviados" class="dashboard-tab-content">
+            <section class="dash-section">
+                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📤 Convites Enviados</h3>
+                <div id="invitationsList" class="invitations-list">
+                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites enviados...</p>
+                </div>
+            </section>
+        </div>
 
-                <section class="dash-section" style="margin-bottom: 0;">
-                    <h3>📬 Convites Recebidos</h3>
-                    <div id="receivedList" class="invitations-list">
-                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando convites recebidos...</p>
-                    </div>
-                </section>
-            </div>
-        </main>
+        <!-- ABA 3 — 📬 CONVITES RECEBIDOS -->
+        <div id="tab-recebidos" class="dashboard-tab-content">
+            <section class="dash-section">
+                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📬 Convites Recebidos</h3>
+                <div id="receivedList" class="invitations-list">
+                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites recebidos...</p>
+                </div>
+            </section>
+        </div>
+
     </div>
 
-    <!-- Script do Dashboard -->
-    <script type="module" src="js/dashboard.js"></script>
+    <!-- Script de Processamento do Dashboard -->
+    <script type="module" src="/js/dashboard.js"></script>
     <script>
-        // Função utilitária global para preview de imagens no front-end
+        // Função utilitária global de preview
         window.previewImage = function(input, imgId, iconId, textId) {
             const file = input.files[0];
             if (file) {
@@ -143,14 +158,14 @@
                     const img = document.getElementById(imgId);
                     img.src = e.target.result;
                     img.style.display = 'block';
-                    document.getElementById(iconId).style.display = 'none';
-                    document.getElementById(textId).style.display = 'none';
+                    if (document.getElementById(iconId)) document.getElementById(iconId).style.display = 'none';
+                    if (document.getElementById(textId)) document.getElementById(textId).style.display = 'none';
                 }
                 reader.readAsDataURL(file);
             }
         };
 
-        // Amarrar os inputs de imagens para fazer o preview dinâmico
+        // Escutar uploads
         document.getElementById('imgInput1').addEventListener('change', function() {
             previewImage(this, 'imgPrev1', 'imgIcon1', 'imgText1');
         });
