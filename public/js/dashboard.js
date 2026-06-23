@@ -28,22 +28,6 @@ let unsubscribeSent = null;
 let unsubscribeReceived = null;
 let userNome = "Remetente";
 
-// 0. Alternância de Abas do Dashboard
-window.switchDashboardTab = function(tabId) {
-    document.querySelectorAll(".dashboard-tab-content").forEach(el => {
-        el.classList.remove("active");
-    });
-    document.querySelectorAll(".tab-button").forEach(el => {
-        el.classList.remove("active");
-    });
-
-    const activeTab = document.getElementById(`tab-${tabId}`);
-    const activeBtn = document.getElementById(`tabBtn-${tabId}`);
-
-    if (activeTab) activeTab.classList.add("active");
-    if (activeBtn) activeBtn.classList.add("active");
-};
-
 // 1. Controle de Lugares Dinâmicos
 function addLugarItem(emoji, nome) {
     if (placesArray.length >= 6) {
@@ -190,7 +174,7 @@ function setupSentListener(userId) {
         if (snapshot.empty) {
             listDiv.innerHTML = `
                 <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">
-                    Você ainda não enviou nenhum convite. Crie um na primeira aba! 🌸
+                    Você ainda não enviou nenhum convite. Crie um no formulário ao lado! 🌸
                 </p>
             `;
             return;

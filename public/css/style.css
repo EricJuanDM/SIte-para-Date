@@ -765,43 +765,50 @@ button {
 
 /* Tema Claro para o Painel do Remetente */
 body.dashboard-body {
-    background-color: #f5f5f5 !important;
-    background-image: none !important;
-    color: #333333;
+    /* Mantém o fundo original do body (escuro vinho) */
+    color: var(--color-text-dark);
 }
 
 body.dashboard-body .container-wide {
-    background: #ffffff;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     border-radius: 24px;
-    max-width: 900px;
+    max-width: 1100px;
     padding: 30px 24px;
     margin-top: 30px;
     margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
 }
 
 body.dashboard-body .dash-header h2 {
-    color: #2b1616;
+    color: var(--color-text-dark);
 }
 
 body.dashboard-body .dash-header p {
-    color: #777777;
+    color: var(--color-text-light);
 }
 
 body.dashboard-body .dash-section {
     background: #ffffff !important;
-    border: 1px solid #eaeaea !important;
+    border: 1px solid rgba(74, 40, 44, 0.08) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
     border-radius: 16px !important;
     padding: 24px !important;
-    margin-bottom: 24px !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
 }
 
 body.dashboard-body label {
     font-size: 14px;
     font-weight: 600;
-    color: #444444;
+    color: var(--color-text-dark);
     margin-bottom: 6px;
     display: block;
 }
@@ -812,9 +819,9 @@ body.dashboard-body input[type="password"],
 body.dashboard-body input[type="date"],
 body.dashboard-body select,
 body.dashboard-body textarea {
-    background: #fafafa;
-    border: 1.5px solid #eaeaea;
-    color: #333333;
+    background: #ffffff;
+    border: 1.5px solid rgba(74, 40, 44, 0.15);
+    color: var(--color-text-dark);
     font-size: 16px;
     padding: 12px 14px;
     margin-bottom: 20px;
@@ -824,58 +831,9 @@ body.dashboard-body textarea {
 body.dashboard-body input:focus,
 body.dashboard-body select:focus,
 body.dashboard-body textarea:focus {
-    border-color: #ff8fa3;
+    border-color: var(--color-primary);
     background: #ffffff;
     box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.15);
-}
-
-/* Sistema de Abas */
-.tab-navigation {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-    border-bottom: 1.5px solid #eaeaea;
-    padding-bottom: 10px;
-}
-
-.tab-button {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #666666;
-    font-family: var(--font-primary);
-    font-weight: 600;
-    font-size: 15px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    height: auto !important;
-    transition: all 0.2s ease;
-}
-
-.tab-button:hover {
-    background-color: #eaeaea !important;
-    color: #333333;
-}
-
-.tab-button.active {
-    background: linear-gradient(135deg, #ff8fa3 0%, #c97d8c 100%) !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(255, 143, 163, 0.2) !important;
-}
-
-.dashboard-tab-content {
-    display: none;
-    animation: tabFadeIn 0.3s ease forwards;
-}
-
-.dashboard-tab-content.active {
-    display: block;
-}
-
-@keyframes tabFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Botões com Gradiente Rosa/Roxo */
@@ -917,7 +875,7 @@ body.dashboard-body .btn-secondary:hover {
 /* Cards da Listagem com Visual Limpo */
 .invitation-card {
     background: #ffffff !important;
-    border: 1px solid #eaeaea !important;
+    border: 1px solid rgba(74, 40, 44, 0.08) !important;
     border-left: 6px solid var(--color-primary) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
     border-radius: 12px !important;
@@ -925,26 +883,39 @@ body.dashboard-body .btn-secondary:hover {
 }
 
 .invitation-card h4 {
-    color: #2b1616;
+    color: var(--color-text-dark);
 }
 
 .invitation-card .invitation-details {
-    color: #666666;
+    color: var(--color-text-light);
+}
+
+/* Grid de duas colunas do Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    gap: 24px;
+    width: 100%;
+    align-items: start;
+    margin-top: 15px;
+}
+
+.dashboard-col-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 /* Responsividade Mobile do Redesign */
 @media (max-width: 768px) {
-    .tab-navigation {
-        flex-direction: column;
-        border-bottom: none;
-        padding-bottom: 0;
-        gap: 6px;
-    }
-    
-    .tab-button {
-        width: 100%;
-        text-align: center;
-        padding: 12px;
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     body.dashboard-body .container-wide {

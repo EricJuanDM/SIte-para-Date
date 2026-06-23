@@ -17,13 +17,6 @@
             <button id="btnLogout" class="btn-secondary">Sair 🚪</button>
         </header>
 
-        <!-- Menu de Abas Superior (Vira empilhado no mobile) -->
-        <nav class="tab-navigation">
-            <button class="tab-button active" id="tabBtn-criar" onclick="switchDashboardTab('criar')">✨ Criar Convite</button>
-            <button class="tab-button" id="tabBtn-enviados" onclick="switchDashboardTab('enviados')">📤 Convites Enviados</button>
-            <button class="tab-button" id="tabBtn-recebidos" onclick="switchDashboardTab('recebidos')">📬 Convites Recebidos</button>
-        </nav>
-
         <!-- Container do link gerado destacado (compartilhado e exibido no topo do formulário) -->
         <div id="generatedLinkContainer" style="display: none; background: #e8f5e9; border: 1.5px solid #a5d6a7; padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: left;">
             <h4 style="color: #2e7d32; margin-bottom: 4px; font-size: 15px; font-family: var(--font-title); font-weight: 700;">🎉 Convite Criado com Sucesso!</h4>
@@ -34,114 +27,116 @@
             </div>
         </div>
 
-        <!-- ABA 1 — ✨ CRIAR CONVITE -->
-        <div id="tab-criar" class="dashboard-tab-content active">
-            <section class="dash-section">
-                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">✨ Novo Convite Personalizado</h3>
-                <form id="inviteForm" onsubmit="return false;">
-                    
-                    <!-- 1. Nome de quem vai receber -->
-                    <label for="nomeDestinatario">Nome do destinatário:</label>
-                    <input type="text" id="nomeDestinatario" placeholder="Ex: Ana, João, Carolina..." required>
+        <!-- Layout de Duas Colunas -->
+        <div class="dashboard-grid">
+            <!-- COLUNA ESQUERDA — Criar Convite -->
+            <div class="dashboard-col-left">
+                <section class="dash-section">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">✨ Novo Convite Personalizado</h3>
+                    <form id="inviteForm" onsubmit="return false;">
+                        
+                        <!-- 1. Nome de quem vai receber -->
+                        <label for="nomeDestinatario">Nome do destinatário:</label>
+                        <input type="text" id="nomeDestinatario" placeholder="Ex: Ana, João, Carolina..." required>
 
-                    <!-- 2. E-mail do destinatário -->
-                    <label for="emailDestinatario">E-mail do destinatário:</label>
-                    <input type="email" id="emailDestinatario" placeholder="Ex: ana@email.com" required>
+                        <!-- 2. E-mail do destinatário -->
+                        <label for="emailDestinatario">E-mail do destinatário:</label>
+                        <input type="email" id="emailDestinatario" placeholder="Ex: ana@email.com" required>
 
-                    <!-- 3. Mensagem personalizada (opcional) -->
-                    <label for="mensagemPersonalizada">Mensagem personalizada antes da pergunta (opcional):</label>
-                    <textarea id="mensagemPersonalizada" rows="3" placeholder="Ex: Você é a pessoa mais especial do meu mundo..."></textarea>
+                        <!-- 3. Mensagem personalizada (opcional) -->
+                        <label for="mensagemPersonalizada">Mensagem personalizada antes da pergunta (opcional):</label>
+                        <textarea id="mensagemPersonalizada" rows="3" placeholder="Ex: Você é a pessoa mais especial do meu mundo..."></textarea>
 
-                    <!-- 4. Cores (fundo e card) — lado a lado -->
-                    <div class="color-picker-row">
-                        <div class="color-field">
-                            <label for="corFundo">Cor do Fundo</label>
-                            <input type="color" id="corFundo" value="#1e1111">
+                        <!-- 4. Cores (fundo e card) — lado a lado -->
+                        <div class="color-picker-row">
+                            <div class="color-field">
+                                <label for="corFundo">Cor do Fundo</label>
+                                <input type="color" id="corFundo" value="#1e1111">
+                            </div>
+                            <div class="color-field">
+                                <label for="corCard">Cor do Card</label>
+                                <input type="color" id="corCard" value="#ffffff">
+                            </div>
                         </div>
-                        <div class="color-field">
-                            <label for="corCard">Cor do Card</label>
-                            <input type="color" id="corCard" value="#ffffff">
+
+                        <!-- 5. Foto de fundo (upload) — seção separada com preview -->
+                        <label>Foto de fundo personalizada (opcional - substitui a cor de fundo sólida):</label>
+                        <div class="bg-upload-box" onclick="document.getElementById('bgInput').click()">
+                            <input type="file" id="bgInput" accept="image/*" style="display: none;">
+                            <img id="bgPrev" style="display: none; border-radius: 8px; width: 60px; height: 60px; object-fit: cover;">
+                            <span id="bgIcon">🖼️</span>
+                            <p id="bgText" style="margin-top: 0; font-size: 13px; margin-left: 10px;">Subir foto de fundo</p>
                         </div>
-                    </div>
 
-                    <!-- 5. Foto de fundo (upload) — seção separada com preview -->
-                    <label>Foto de fundo personalizada (opcional - substitui a cor de fundo sólida):</label>
-                    <div class="bg-upload-box" onclick="document.getElementById('bgInput').click()">
-                        <input type="file" id="bgInput" accept="image/*" style="display: none;">
-                        <img id="bgPrev" style="display: none; border-radius: 8px; width: 60px; height: 60px; object-fit: cover;">
-                        <span id="bgIcon">🖼️</span>
-                        <p id="bgText" style="margin-top: 0; font-size: 13px; margin-left: 10px;">Subir foto de fundo</p>
-                    </div>
-
-                    <!-- 6. Fotos personalizadas (3 slots) — grid 3 colunas -->
-                    <label style="margin-top: 15px;">Fotos românticas/memes (substituem as imagens padrão):</label>
-                    <div class="upload-grid">
-                        <div class="upload-box" onclick="document.getElementById('imgInput1').click()">
-                            <input type="file" id="imgInput1" accept="image/*" style="display: none;">
-                            <img id="imgPrev1" style="display: none;">
-                            <span id="imgIcon1">📸</span>
-                            <p id="imgText1">Foto 1 (Início)</p>
+                        <!-- 6. Fotos personalizadas (3 slots) — grid 3 colunas -->
+                        <label style="margin-top: 15px;">Fotos românticas/memes (substituem as imagens padrão):</label>
+                        <div class="upload-grid">
+                            <div class="upload-box" onclick="document.getElementById('imgInput1').click()">
+                                <input type="file" id="imgInput1" accept="image/*" style="display: none;">
+                                <img id="imgPrev1" style="display: none;">
+                                <span id="imgIcon1">📸</span>
+                                <p id="imgText1">Foto 1 (Início)</p>
+                            </div>
+                            <div class="upload-box" onclick="document.getElementById('imgInput2').click()">
+                                <input type="file" id="imgInput2" accept="image/*" style="display: none;">
+                                <img id="imgPrev2" style="display: none;">
+                                <span id="imgIcon2">🎉</span>
+                                <p id="imgText2">Foto 2 (Sucesso)</p>
+                            </div>
+                            <div class="upload-box" onclick="document.getElementById('imgInput3').click()">
+                                <input type="file" id="imgInput3" accept="image/*" style="display: none;">
+                                <img id="imgPrev3" style="display: none;">
+                                <span id="imgIcon3">💖</span>
+                                <p id="imgText3">Foto 3 (Fim)</p>
+                            </div>
                         </div>
-                        <div class="upload-box" onclick="document.getElementById('imgInput2').click()">
-                            <input type="file" id="imgInput2" accept="image/*" style="display: none;">
-                            <img id="imgPrev2" style="display: none;">
-                            <span id="imgIcon2">🎉</span>
-                            <p id="imgText2">Foto 2 (Sucesso)</p>
+
+                        <!-- 7. Lugares personalizados (emoji + nome) — seção clara -->
+                        <label style="margin-top: 15px;">Lugares sugeridos para o date (entre 2 e 6 opções):</label>
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+                            <input type="text" id="lugarEmoji" placeholder="Emoji (opcional)" style="width: 75px; margin-bottom: 0; text-align: center;">
+                            <input type="text" id="lugarNome" placeholder="Nome (ex: Sorveteria Central, Parque)" style="margin-bottom: 0; flex: 1;">
+                            <button type="button" class="btn-primary" id="btnAddLugar" style="height: 48px; border-radius: 12px; box-shadow: none; flex-shrink: 0;">+</button>
                         </div>
-                        <div class="upload-box" onclick="document.getElementById('imgInput3').click()">
-                            <input type="file" id="imgInput3" accept="image/*" style="display: none;">
-                            <img id="imgPrev3" style="display: none;">
-                            <span id="imgIcon3">💖</span>
-                            <p id="imgText3">Foto 3 (Fim)</p>
+                        <div id="lugaresList" class="recusa-container" style="margin-bottom: 20px;">
+                            <!-- Injetado dinamicamente -->
                         </div>
-                    </div>
 
-                    <!-- 7. Lugares personalizados (emoji + nome) — seção clara -->
-                    <label style="margin-top: 15px;">Lugares sugeridos para o date (entre 2 e 6 opções):</label>
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
-                        <input type="text" id="lugarEmoji" placeholder="Emoji (opcional)" style="width: 75px; margin-bottom: 0; text-align: center;">
-                        <input type="text" id="lugarNome" placeholder="Nome (ex: Sorveteria Central, Parque)" style="margin-bottom: 0; flex: 1;">
-                        <button type="button" class="btn-primary" id="btnAddLugar" style="height: 48px; border-radius: 12px; box-shadow: none; flex-shrink: 0;">+</button>
-                    </div>
-                    <div id="lugaresList" class="recusa-container" style="margin-bottom: 20px;">
-                        <!-- Injetado dinamicamente -->
-                    </div>
+                        <!-- 8. Opções do botão "não" (frases engraçadas) — seção separada -->
+                        <label style="margin-top: 15px;">Frases engraçadas para o botão "Não" (entre 2 e 5 opções):</label>
+                        <div id="recusaList" class="recusa-container">
+                            <!-- Injetado dinamicamente -->
+                        </div>
+                        <button type="button" class="btn-secondary" id="btnAddRecusa" style="height: 38px; font-size: 13px; padding: 0 15px; margin-bottom: 25px; align-self: flex-start;">
+                            + Adicionar Frase
+                        </button>
 
-                    <!-- 8. Opções do botão "não" (frases engraçadas) — seção separada -->
-                    <label style="margin-top: 15px;">Frases engraçadas para o botão "Não" (entre 2 e 5 opções):</label>
-                    <div id="recusaList" class="recusa-container">
-                        <!-- Injetado dinamicamente -->
+                        <!-- 9. Botão grande "Gerar Convite" centralizado -->
+                        <div style="display: flex; justify-content: center; width: 100%; margin-top: 25px;">
+                            <button type="submit" id="btnSubmitInvite" class="btn-primary" style="width: 100%; max-width: 320px; font-size: 16px;">Gerar Convite 💕</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <!-- COLUNA DIREITA — Convites -->
+            <div class="dashboard-col-right">
+                <!-- Seção de Convites Enviados -->
+                <section class="dash-section">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📤 Convites Enviados</h3>
+                    <div id="invitationsList" class="invitations-list">
+                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites enviados...</p>
                     </div>
-                    <button type="button" class="btn-secondary" id="btnAddRecusa" style="height: 38px; font-size: 13px; padding: 0 15px; margin-bottom: 25px; align-self: flex-start;">
-                        + Adicionar Frase
-                    </button>
+                </section>
 
-                    <!-- 9. Botão grande "Gerar Convite" centralizado -->
-                    <div style="display: flex; justify-content: center; width: 100%; margin-top: 25px;">
-                        <button type="submit" id="btnSubmitInvite" class="btn-primary" style="width: 100%; max-width: 320px; font-size: 16px;">Gerar Convite 💕</button>
+                <!-- Seção de Convites Recebidos -->
+                <section class="dash-section" style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📬 Convites Recebidos</h3>
+                    <div id="receivedList" class="invitations-list">
+                        <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites recebidos...</p>
                     </div>
-                </form>
-            </section>
-        </div>
-
-        <!-- ABA 2 — 📤 CONVITES ENVIADOS -->
-        <div id="tab-enviados" class="dashboard-tab-content">
-            <section class="dash-section">
-                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📤 Convites Enviados</h3>
-                <div id="invitationsList" class="invitations-list">
-                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites enviados...</p>
-                </div>
-            </section>
-        </div>
-
-        <!-- ABA 3 — 📬 CONVITES RECEBIDOS -->
-        <div id="tab-recebidos" class="dashboard-tab-content">
-            <section class="dash-section">
-                <h3 style="margin-bottom: 20px; font-family: var(--font-title); font-size: 22px;">📬 Convites Recebidos</h3>
-                <div id="receivedList" class="invitations-list">
-                    <p style="color: var(--color-text-light); text-align: center; margin-top: 40px; font-size: 13px;">Carregando seus convites recebidos...</p>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
 
     </div>
